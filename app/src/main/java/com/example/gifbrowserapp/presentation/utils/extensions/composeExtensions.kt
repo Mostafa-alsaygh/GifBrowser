@@ -34,3 +34,4 @@ fun Modifier.clickableNoRipple(
         onClick = onClick,
     )
 }
+

@@ -69,7 +69,7 @@ data class Colors(
             contentSecondary = Color(0xFF051f1f),
             contentTertiary = Color(0xFF041c35),
             contentBorder = Color(0x141F0000),
-            surface = Color(0xFFfafdfc),
+            surface = Color(0xFFF7FBF1),
             onPrimary = Color(0xFFFFFFFF),
             background = Color(0xFFFAFAFA),
             disable = Color(0x40051f1f),
