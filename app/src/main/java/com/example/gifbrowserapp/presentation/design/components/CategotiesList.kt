@@ -1,4 +1,4 @@
-package com.example.gifbrowserapp.presentation.components
+package com.example.gifbrowserapp.presentation.design.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,7 +16,7 @@ fun CategoriesGrid(categories: List<String>) {
         modifier = Modifier.fillMaxSize().padding(horizontal = AppTheme.sizes.small)
     ) {
         items(categories.size) { index ->
-            FilledButtonExample(category = categories[index]) { }
+            CategoryItem(category = categories[index]) { }
             //TODO implement onclick scope
         }
     }
