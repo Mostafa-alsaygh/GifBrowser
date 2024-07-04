@@ -1,4 +1,4 @@
-package com.example.gifbrowserapp.presentation.design.components
+package com.example.gifbrowserapp.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
