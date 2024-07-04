@@ -14,13 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.design.AppTheme
-import com.example.gifbrowserapp.presentation.ui.HomeScreen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
 import com.example.gifbrowserapp.presentation.utils.extensions.optionalComposable
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
@@ -37,7 +35,7 @@ fun SearchField(
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
     onActiveChange: (Boolean) -> Unit,
-    leadingIcon: Painter = R.drawable.ic_search.painter,
+    leadingIcon: Painter ,
     onLeadingClick: () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -91,13 +89,13 @@ internal fun Placeholder(text: String, textAlign: TextAlign?) {
     )
 }
 
-@Composable
-@Preview(showBackground = true)
-private fun Preview() = SearchField( query = "",
-    active = false,
-    enabled = false,
-    placeholder = "Search For Gifs",
-    onQueryChange = {},
-    onClear = {},
-    onActiveChange = {}, content = {}
-    )
+//@Composable
+//@Preview(showBackground = true)
+//private fun Preview() = SearchField( query = "",
+//    active = false,
+//    enabled = false,
+//    placeholder = "Search For Gifs",
+//    onQueryChange = {},
+//    onClear = {},
+//    onActiveChange = {}, content = {}
+//    )

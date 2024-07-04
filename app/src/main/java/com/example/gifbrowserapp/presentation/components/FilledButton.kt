@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import com.example.gifbrowserapp.presentation.design.AppTheme
 
 @Composable
-fun FilledButtonExample(category: String, onClick: () -> Unit) {
+fun CategoryItem(category: String, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         modifier = Modifier.padding(all = AppTheme.sizes.small),
