@@ -129,7 +129,7 @@ abstract class BaseViewModel<S, E>(initState: S) : ViewModel() {
             is ResponseException -> {
                 when (exception.code) {
                     HttpStatus.SC_UNAUTHORIZED -> ErrorState.UnAuthorized(exception.message)
-                    SC_TOO_MANY_REQUESTS -> ErrorState.RequestFailed(TOO_MANY_REQUESTS)
+                    HttpStatusSC_TOO_MANY_REQUESTS -> ErrorState.RequestFailed(TOO_MANY_REQUESTS)
                     else -> ErrorState.RequestFailed(exception.message)
                 }
             }
@@ -140,6 +140,6 @@ abstract class BaseViewModel<S, E>(initState: S) : ViewModel() {
 
     private companion object {
         const val TOO_MANY_REQUESTS = "Too Many Attempts"
-        const val SC_TOO_MANY_REQUESTS = 429
+        const val HttpStatusSC_TOO_MANY_REQUESTS = 429
     }
 }
