@@ -1,4 +1,4 @@
-package com.example.gifbrowserapp.presentation.features.GiphyDetails
+package com.example.gifbrowserapp.presentation.features.giphyDetails
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -16,18 +16,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.CustomButton
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.features.home.HomeViewModel
 
 @Composable
-fun GifDetailScreen(gif: String) {
+fun GiphyDetailsScreen(
+    viewModel: GiphyDetailsViewModel,
+    navController: NavController,
+) {
     Column(Modifier.fillMaxSize()) {
         SubcomposeAsyncImage(
-            model = gif,
+            //todo
+            model = "",
             contentDescription = "gif image"
         ) {
             if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
@@ -71,6 +77,6 @@ fun GifDetailScreen(gif: String) {
 }
 
 
-@Composable
-@Preview(showBackground = true)
-private fun Preview() = GifDetailScreen("")
+//@Composable
+//@Preview(showBackground = true)
+//private fun Preview() = GiphyDetailsScreen(viewModel = GiphyDetailsViewModel(), navController = NavController())
