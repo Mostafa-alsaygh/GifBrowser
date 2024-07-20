@@ -1,8 +1,9 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.gifbrowserapp.data.entities.gifData.GifData
-import com.example.gifbrowserapp.data.remote.service.RetrofitInstance
+import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +13,16 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
+class HomeViewModel @Inject constructor(
+    private val giphyRepository: GiphyRepository
+) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
     HomeInteractionListener {
-    private val apiKey = "IAE3fY0ekIEgxc6Wnzfi9NTrwIYBtE7t"
 
-    private val _trendingGifs = MutableStateFlow<List<GifData>>(emptyList())
-    val trendingGifs: StateFlow<List<GifData>> = _trendingGifs
+//    private val _trendingGifs = MutableStateFlow<List<TrendingGif>>(emptyList())
+//    val trendingGifs: StateFlow<List<TrendingGif>> = _trendingGifs
+
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> get() = _uiState
 
 
     init {
@@ -26,19 +31,13 @@ class HomeViewModel @Inject constructor() : BaseViewModel<HomeUiState, HomeEvent
 
     private fun fetchTrendingGifs() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val response = RetrofitInstance.api.getTrendingGifs(
-                    apiKey = apiKey,
-                    limit = 25,
-                    offset = 0,
-                    rating = "g",
-                    bundle = "messaging_non_clips"
-                )
-                _trendingGifs.value = response.data
-                Timber.d("Fetched ${response.data} gifs")
-
+                val gifs = giphyRepository.takeTrendingGifs()
+                _uiState.value = HomeUiState(gifsData = gifs.data.toTrendingGifList(), isLoading = false)
+                Log.d("MOTAFA",_uiState.value.gifsData.toString())
             } catch (e: Exception) {
-                Timber.e(e, "Error fetching trending gifs")
+                _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
             }
         }
     }

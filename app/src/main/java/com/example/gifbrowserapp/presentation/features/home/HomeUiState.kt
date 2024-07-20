@@ -1,12 +1,21 @@
 package com.example.gifbrowserapp.presentation.features.home
 
-import com.example.gifbrowserapp.data.entities.gifData.GifData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 data class HomeUiState(
+    val gifsData: List<TrendingGif> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 
-    val gifData: List<GifData> = emptyList(),
-    val searchQuery: Flow<String> = emptyFlow(),
-    val isLoading: Boolean = false
+)
 
+
+data class TrendingGif(
+    val id: String = "",
+    val url: String = "",
+    val title: String = "",
+    val images: GifImages
+)
+
+data class GifImages(
+    val original: String = "",
+    val fixedWidthDownsampled: String = "",
 )

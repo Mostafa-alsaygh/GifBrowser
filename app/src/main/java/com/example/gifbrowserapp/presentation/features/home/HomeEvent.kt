@@ -7,5 +7,5 @@ interface HomeEvent {
     object NavigateBack : SearchEvent
     object NavigateSearchScreen : SearchEvent
 
-    object NavigateToDetailGif : SearchEvent
+    object NavigateToGiphyDetailsScreen : SearchEvent
 }
