@@ -4,16 +4,10 @@ package com.example.gifbrowserapp.data.entities.categories
 import com.google.gson.annotations.SerializedName
 
 data class Gif(
-    @SerializedName("bitly_gif_url")
-    val bitlyGifUrl: String?,
-    @SerializedName("bitly_url")
-    val bitlyUrl: String?,
     @SerializedName("content_url")
     val contentUrl: String?,
     @SerializedName("create_datetime")
     val createDatetime: String?,
-    @SerializedName("embed_url")
-    val embedUrl: String?,
     @SerializedName("id")
     val id: String?,
     @SerializedName("images")

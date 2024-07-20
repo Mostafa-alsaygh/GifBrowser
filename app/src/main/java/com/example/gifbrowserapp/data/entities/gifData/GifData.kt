@@ -7,7 +7,7 @@ data class GifData(
     @SerializedName("analytics")
     val analytics: Analytics?,
     @SerializedName("id")
-    val id: String?,
+    val id: String,
     @SerializedName("images")
     val images: GifImages?,
     @SerializedName("import_datetime")

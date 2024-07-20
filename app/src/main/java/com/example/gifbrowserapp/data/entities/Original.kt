@@ -4,24 +4,25 @@ package com.example.gifbrowserapp.data.entities
 import com.google.gson.annotations.SerializedName
 
 data class Original(
+    //todo {= ""}?
     @SerializedName("frames")
-    val frames: String?,
+    val frames: String? = "",
     @SerializedName("hash")
-    val hash: String?,
+    val hash: String? = "",
     @SerializedName("height")
-    val height: String?,
+    val height: String = "",
     @SerializedName("mp4")
-    val mp4: String?,
+    val mp4: String? = "",
     @SerializedName("mp4_size")
-    val mp4Size: String?,
+    val mp4Size: String? = "",
     @SerializedName("size")
-    val size: String?,
+    val size: String? = "",
     @SerializedName("url")
-    val url: String?,
+    val url: String? = "",
     @SerializedName("webp")
-    val webp: String?,
+    val webp: String? = "",
     @SerializedName("webp_size")
-    val webpSize: String?,
+    val webpSize: String? = "",
     @SerializedName("width")
-    val width: String?
+    val width: String? = ""
 )

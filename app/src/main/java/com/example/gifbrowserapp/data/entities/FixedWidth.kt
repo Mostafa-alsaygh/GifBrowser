@@ -1,4 +1,4 @@
-package com.example.gifbrowserapp.data.entities.gifData
+package com.example.gifbrowserapp.data.entities
 
 
 import com.google.gson.annotations.SerializedName
