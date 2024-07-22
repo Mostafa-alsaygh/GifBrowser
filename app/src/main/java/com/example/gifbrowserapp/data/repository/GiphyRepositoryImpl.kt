@@ -1,22 +1,16 @@
 package com.example.gifbrowserapp.data.repository
 
-import android.app.Application
-import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.data.entities.ApiResponseRemote
+import com.example.gifbrowserapp.data.entities.categories.CategoryData
 import com.example.gifbrowserapp.data.entities.gifData.GifData
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.utils.ApiUtils
+import javax.inject.Inject
 
-class GiphyRepositoryImpl(
+class GiphyRepositoryImpl @Inject constructor(
     private val giphyApi: GiphyApiService,
-    private val appContext: Application
 ) : GiphyRepository {
 
-
-    init {
-        val appContext = appContext.getString(R.string.app_name)
-        println("hi from repository the app name is $appContext")
-    }
 
     override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> {
 
@@ -27,5 +21,9 @@ class GiphyRepositoryImpl(
             rating = "g",
             bundle = "messaging_non_clips"
         )
+    }
+
+    override suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData> {
+        return  giphyApi.getCategoriesOfGiphy(apiKey = ApiUtils.API_KEY)
     }
 }
