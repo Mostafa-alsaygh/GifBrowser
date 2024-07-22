@@ -9,13 +9,13 @@ import androidx.compose.ui.Modifier
 import com.example.gifbrowserapp.presentation.design.AppTheme
 
 @Composable
-fun CategoryItem(category: String, onClick: () -> Unit) {
+fun CategoryItem(nameOfCategory: String, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         modifier = Modifier.padding(all = AppTheme.sizes.small),
         colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.primary)
     )
     {
-        Text(category)
+        Text(nameOfCategory)
     }
 }

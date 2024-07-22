@@ -1,6 +1,5 @@
 package com.example.gifbrowserapp.data.di
 
-import android.app.Application
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.GiphyRepositoryImpl
@@ -28,9 +27,8 @@ object GiphyModule {
 
     @Provides
     @Singleton
-    fun providesGiphyRepository(giphyApi: GiphyApiService, gifApp: Application): GiphyRepository {
-
-        return GiphyRepositoryImpl(giphyApi = giphyApi, gifApp)
+    fun providesGiphyRepository(giphyApi: GiphyApiService): GiphyRepository {
+        return GiphyRepositoryImpl(giphyApi = giphyApi)
     }
 
 }

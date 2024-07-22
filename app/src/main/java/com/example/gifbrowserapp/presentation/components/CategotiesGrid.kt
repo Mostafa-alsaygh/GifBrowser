@@ -6,23 +6,18 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.gifbrowserapp.data.entities.categories.CategoryData
 import com.example.gifbrowserapp.presentation.design.AppTheme
 
 @Composable
-fun CategoriesGrid(categories: List<String>) {
+fun CategoriesGrid(categories: List<CategoryData>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize().padding(horizontal = AppTheme.sizes.small)
     ) {
         items(categories.size) { index ->
-            CategoryItem(category = categories[index]) { }
+            CategoryItem(nameOfCategory = categories[index].name.toString()) { }
             //TODO implement onclick scope
         }
     }
 }
-
-@Composable
-@Preview(showBackground = true)
-private fun Preview() =
-    CategoriesGrid(listOf("Category 1", "Category 2", "Category 3", "Category 4", "Category 5"))

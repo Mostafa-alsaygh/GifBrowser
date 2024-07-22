@@ -13,12 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
+import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
@@ -35,7 +35,7 @@ fun HomeScreen(
     var state by remember { mutableIntStateOf(0) }
     val titles = listOf("Trends", "Categories")
 
-    val uiState = viewModel.uiState.collectAsState().value.gifsData
+    val uiState = viewModel.uiState.collectAsState()
 
     Column(
         Modifier
@@ -76,18 +76,14 @@ fun HomeScreen(
             }
         }
 
-        if (state == 0) {
-            GifsGrid(gifList = uiState, modifier = Modifier.fillMaxSize())
+        when (state) {
+            0 -> {
+                GifsGrid(gifList = uiState.value.gifsData, modifier = Modifier.fillMaxSize())
+            }
+
+            1 -> CategoriesGrid(categories = uiState.value.categories)
         }
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = "Text tab ${state + 1} selected",
-            style = AppTheme.typography.body
-        )
+
 
     }
 }
-
-//@Composable
-//@Preview(showBackground = true)
-//private fun Preview() = HomeScreen(viewModel = , navController = NavController())

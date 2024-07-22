@@ -1,6 +1,12 @@
-package com.example.gifbrowserapp.presentation.features.home
+package com.example.gifbrowserapp.data.remote.mappers
 
 import com.example.gifbrowserapp.data.entities.gifData.GifData
+import com.example.gifbrowserapp.presentation.features.home.GifImages
+import com.example.gifbrowserapp.presentation.features.home.TrendingGif
+
+fun List<GifData>.toTrendingGifList(): List<TrendingGif> {
+    return this.map { it.toTrendingGif() }
+}
 
 fun GifData.toTrendingGif(): TrendingGif {
     return TrendingGif(
@@ -12,8 +18,4 @@ fun GifData.toTrendingGif(): TrendingGif {
             fixedWidthDownsampled = this.images?.fixedWidthDownsampled?.url ?: ""
         )
     )
-}
-
-fun List<GifData>.toTrendingGifList(): List<TrendingGif> {
-    return this.map { it.toTrendingGif() }
 }

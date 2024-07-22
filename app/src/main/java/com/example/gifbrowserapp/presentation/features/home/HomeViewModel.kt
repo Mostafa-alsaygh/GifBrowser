@@ -1,15 +1,13 @@
 package com.example.gifbrowserapp.presentation.features.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.gifbrowserapp.data.entities.gifData.GifData
+import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,24 +16,28 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
     HomeInteractionListener {
 
-//    private val _trendingGifs = MutableStateFlow<List<TrendingGif>>(emptyList())
-//    val trendingGifs: StateFlow<List<TrendingGif>> = _trendingGifs
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> get() = _uiState
 
 
     init {
-        fetchTrendingGifs()
+        fetchTrendingAndCategoriesGiphy()
     }
 
-    private fun fetchTrendingGifs() {
+    private fun fetchTrendingAndCategoriesGiphy() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val gifs = giphyRepository.takeTrendingGifs()
-                _uiState.value = HomeUiState(gifsData = gifs.data.toTrendingGifList(), isLoading = false)
-                Log.d("MOTAFA",_uiState.value.gifsData.toString())
+                val categories = giphyRepository.takeCategoriesOfGiphy()
+                _uiState.value = HomeUiState(
+                    gifsData = gifs.data.toTrendingGifList(),
+                    categories = categories.data,
+                    isLoading = false,
+
+
+                )
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
             }

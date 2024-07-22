@@ -3,7 +3,7 @@ package com.example.gifbrowserapp.data.entities.categories
 
 import com.google.gson.annotations.SerializedName
 
-data class CategoriesData(
+data class CategoryData(
 
     @SerializedName("name")
     val name: String?,
