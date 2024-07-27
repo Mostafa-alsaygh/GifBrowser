@@ -13,12 +13,19 @@ interface GiphyApiService {
         @Query("api_key") apiKey: String,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
-        @Query("rating") rating: String,
-        @Query("bundle") bundle: String
     ): ApiResponseRemote<GifData>
 
     @GET("v1/gifs/categories")
-    suspend fun getCategoriesOfGiphy(
+    suspend fun getCategories(
         @Query("api_key") apiKey: String,
     ):ApiResponseRemote<CategoryData>
+
+
+    @GET("v1/gifs/search")
+    suspend fun getSearchData(
+        @Query("api_key") apiKey: String,
+        @Query("q") query: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+    ):ApiResponseRemote<GifData>
 }

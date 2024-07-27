@@ -5,6 +5,7 @@ import com.example.gifbrowserapp.data.entities.categories.CategoryData
 import com.example.gifbrowserapp.data.entities.gifData.GifData
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.utils.ApiUtils
+import retrofit2.http.Query
 import javax.inject.Inject
 
 class GiphyRepositoryImpl @Inject constructor(
@@ -16,14 +17,18 @@ class GiphyRepositoryImpl @Inject constructor(
 
         return giphyApi.getTrendingGifs(
             apiKey = ApiUtils.API_KEY,
-            limit = 25,
+            limit = 50,
             offset = 0,
-            rating = "g",
-            bundle = "messaging_non_clips"
         )
     }
 
     override suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData> {
-        return  giphyApi.getCategoriesOfGiphy(apiKey = ApiUtils.API_KEY)
+        return giphyApi.getCategories(apiKey = ApiUtils.API_KEY)
+    }
+
+
+
+    override suspend fun takeSearchData(query: String): ApiResponseRemote<GifData> {
+        return giphyApi.getSearchData(apiKey = ApiUtils.API_KEY, query = query, limit = 10, offset = 0)
     }
 }

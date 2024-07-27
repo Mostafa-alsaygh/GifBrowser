@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gif Browser App</string>
+    <string name="please_wait">please_wait</string>
 </resources>

@@ -22,6 +22,7 @@ import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
 
@@ -52,7 +53,7 @@ fun HomeScreen(
             onClear = {},
             leadingIcon = R.drawable.ic_search.painter,
             onActiveChange = {},
-            modifier = Modifier.clickableNoRipple(onClick = {})
+            modifier = Modifier.clickableNoRipple(onClick = { navController.navigate(Screen.Search.route) })
         ) {}
 
 

@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
                     isLoading = false,
 
 
-                )
+                    )
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
             }
@@ -50,14 +50,6 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun onClickGif() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onClickTrendingTab() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onClickCategoriesTab() {
         TODO("Not yet implemented")
     }
 

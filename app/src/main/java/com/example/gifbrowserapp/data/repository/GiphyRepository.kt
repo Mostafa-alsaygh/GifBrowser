@@ -8,4 +8,6 @@ interface GiphyRepository {
     suspend fun takeTrendingGifs(): ApiResponseRemote<GifData>
 
     suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData>
+
+    suspend fun takeSearchData(query: String):ApiResponseRemote<GifData>
 }
