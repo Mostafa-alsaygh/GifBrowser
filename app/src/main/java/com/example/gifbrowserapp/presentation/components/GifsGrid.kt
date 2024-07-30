@@ -1,8 +1,8 @@
 package com.example.gifbrowserapp.presentation.components
 
 import android.os.Build
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -22,7 +22,8 @@ import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 @Composable
 fun GifsGrid(
     modifier: Modifier = Modifier,
-    gifList: List<TrendingGif>
+    gifList: List<TrendingGif>,
+    onGifClick: (String) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -43,7 +44,8 @@ fun GifsGrid(
                         .build(),
                     contentDescription = null,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp)),
+                        .clip(RoundedCornerShape(6.dp))
+                        .clickable { onGifClick(item.id) },
                     contentScale = ContentScale.Crop
                 )
             }

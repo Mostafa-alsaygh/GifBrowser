@@ -1,20 +1,19 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import androidx.navigation.NavController
+
 interface HomeInteractionListener {
 
-    fun navigateToSearch()
-    fun onClickGif()
-    fun navigateToCategoryScreen()
+    fun navigateToSearch(navController: NavController)
+    fun onClickGif(gifId: String, navController: NavController)
+    fun navigateToCategoryGifsScreen()
     fun navigateToDetailGif()
 
 
     object Preview : HomeInteractionListener {
-        override fun navigateToSearch() {}
-
-        override fun onClickGif() {}
-
-        override fun navigateToCategoryScreen() {}
-
+        override fun navigateToSearch(navController: NavController) {}
+        override fun onClickGif(gifId: String, navController: NavController) {}
+        override fun navigateToCategoryGifsScreen() {}
         override fun navigateToDetailGif() {}
     }
 }

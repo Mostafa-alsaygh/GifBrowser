@@ -14,7 +14,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
@@ -23,12 +22,12 @@ import coil.compose.SubcomposeAsyncImageContent
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.CustomButton
 import com.example.gifbrowserapp.presentation.design.AppTheme
-import com.example.gifbrowserapp.presentation.features.home.HomeViewModel
 
 @Composable
 fun GiphyDetailsScreen(
     viewModel: GiphyDetailsViewModel,
     navController: NavController,
+    gifId: String?,
 ) {
     Column(Modifier.fillMaxSize()) {
         SubcomposeAsyncImage(

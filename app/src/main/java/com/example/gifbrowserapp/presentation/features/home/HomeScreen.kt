@@ -22,6 +22,7 @@ import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.features.home.HomeInteractionListener.Preview.navigateToSearch
 import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
@@ -35,7 +36,6 @@ fun HomeScreen(
 ) {
     var state by remember { mutableIntStateOf(0) }
     val titles = listOf("Trends", "Categories")
-
     val uiState = viewModel.uiState.collectAsState()
 
     Column(
@@ -53,7 +53,7 @@ fun HomeScreen(
             onClear = {},
             leadingIcon = R.drawable.ic_search.painter,
             onActiveChange = {},
-            modifier = Modifier.clickableNoRipple(onClick = { navController.navigate(Screen.Search.route) })
+            modifier = Modifier.clickableNoRipple(onClick = { navigateToSearch(navController) })
         ) {}
 
 
@@ -79,7 +79,11 @@ fun HomeScreen(
 
         when (state) {
             0 -> {
-                GifsGrid(gifList = uiState.value.gifsData, modifier = Modifier.fillMaxSize())
+                GifsGrid(
+                    gifList = uiState.value.gifsData,
+                    modifier = Modifier.fillMaxSize(),
+                    onGifClick = { gifId -> viewModel.onClickGif(gifId, navController) }
+                )
             }
 
             1 -> CategoriesGrid(categories = uiState.value.categories)

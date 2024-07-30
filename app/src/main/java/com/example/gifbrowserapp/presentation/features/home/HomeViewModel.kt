@@ -1,9 +1,13 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
+import com.example.gifbrowserapp.presentation.navigation.Screen
+import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,19 +49,23 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    override fun navigateToSearch() {
-        TODO("Not yet implemented")
+    override fun navigateToSearch(navController: NavController) {
+        navController.navigate(Screen.Search.route)
     }
 
-    override fun onClickGif() {
-        TODO("Not yet implemented")
-    }
+    override fun onClickGif(gifId: String, navController: NavController) {
+        navController.navigateToGiphyDetailsScreen(gifId)
+        Log.d("INHOMEVIEWMODEL", gifId)
 
-    override fun navigateToCategoryScreen() {
-        TODO("Not yet implemented")
     }
 
     override fun navigateToDetailGif() {
         TODO("Not yet implemented")
     }
+
+    override fun navigateToCategoryGifsScreen() {
+        TODO("Not yet implemented")
+    }
+
+
 }

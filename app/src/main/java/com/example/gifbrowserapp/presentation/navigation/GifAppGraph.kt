@@ -24,7 +24,6 @@ fun GifAppGraph(
         giphyDetailsDestination(navController)
 
 
-
     }
 
 }
