@@ -14,8 +14,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.decode.ImageDecoderDecoder
 import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 
@@ -23,7 +23,7 @@ import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 fun GifsGrid(
     modifier: Modifier = Modifier,
     gifList: List<TrendingGif>,
-    onGifClick: (String) -> Unit
+    onGifClick: (String,String) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -45,7 +45,7 @@ fun GifsGrid(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .clickable { onGifClick(item.id) },
+                        .clickable { onGifClick(item.images.original,item.url) },
                     contentScale = ContentScale.Crop
                 )
             }

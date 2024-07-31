@@ -1,5 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -53,10 +54,10 @@ class HomeViewModel @Inject constructor(
         navController.navigate(Screen.Search.route)
     }
 
-    override fun onClickGif(gifId: String, navController: NavController) {
-        navController.navigateToGiphyDetailsScreen(gifId)
-        Log.d("INHOMEVIEWMODEL", gifId)
+    override fun onClickGif(gifUrlOriginal: String, gifUrl: String, navController: NavController) {
+        Log.d("INHOMEVIEWMODEL", "${gifUrlOriginal}////$gifUrl")
 
+        navController.navigateToGiphyDetailsScreen(Uri.encode(gifUrlOriginal),Uri.encode(gifUrl))
     }
 
     override fun navigateToDetailGif() {

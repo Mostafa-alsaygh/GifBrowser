@@ -1,14 +1,15 @@
 package com.example.gifbrowserapp.presentation.features.giphyDetails
 
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -16,31 +17,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.CustomButton
+import com.example.gifbrowserapp.presentation.components.GifViewer
 import com.example.gifbrowserapp.presentation.design.AppTheme
 
 @Composable
 fun GiphyDetailsScreen(
     viewModel: GiphyDetailsViewModel,
     navController: NavController,
-    gifId: String?,
+    gifUrlOriginal: String?,
+    gifUrl: String?
 ) {
     Column(Modifier.fillMaxSize()) {
-        SubcomposeAsyncImage(
-            //todo
-            model = "",
-            contentDescription = "gif image"
-        ) {
-            if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
-                CircularProgressIndicator()
-            } else {
-                SubcomposeAsyncImageContent()
-            }
-        }
+        Text(text = gifUrl.let { Uri.decode(it) })
+        GifViewer(
+            gifUrlOriginal, modifier = Modifier
+                .padding(AppTheme.sizes.medium)
+                .fillMaxHeight(0.7f)
+                .fillMaxWidth()
+        )
 
         HorizontalDivider(color = AppTheme.colors.primary, thickness = 2.dp)
 
@@ -74,8 +70,3 @@ fun GiphyDetailsScreen(
         }
     }
 }
-
-
-//@Composable
-//@Preview(showBackground = true)
-//private fun Preview() = GiphyDetailsScreen(viewModel = GiphyDetailsViewModel(), navController = NavController())

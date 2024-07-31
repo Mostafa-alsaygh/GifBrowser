@@ -10,19 +10,24 @@ import com.example.gifbrowserapp.presentation.features.giphyDetails.GiphyDetails
 import com.example.gifbrowserapp.presentation.navigation.Screen
 
 
-fun NavController.navigateToGiphyDetailsScreen(gifId: String) {
-    navigate(Screen.GiphyDetails.createRoute(gifId))
+fun NavController.navigateToGiphyDetailsScreen(gifUrlOriginal: String, gifUrl: String) {
+    navigate(Screen.GiphyDetails.createRoute(gifUrlOriginal, gifUrl))
 }
 
 fun NavGraphBuilder.giphyDetailsDestination(navController: NavController) {
     composable(
         Screen.GiphyDetails.route,
-        arguments = listOf(navArgument("gifId") { type = NavType.StringType })
+        arguments = listOf(
+            navArgument("gifUrlOriginal") { type = NavType.StringType },
+            navArgument("gifUrl") { type = NavType.StringType }
+        )
     ) { backStackEntry ->
         GiphyDetailsScreen(
             viewModel = hiltViewModel(),
             navController = navController,
-            gifId = backStackEntry.arguments?.getString("gifId")
+            gifUrlOriginal = backStackEntry.arguments?.getString("gifUrlOriginal"),
+            gifUrl = backStackEntry.arguments?.getString("gifUrl")
+
         )
     }
 }

@@ -82,7 +82,9 @@ fun HomeScreen(
                 GifsGrid(
                     gifList = uiState.value.gifsData,
                     modifier = Modifier.fillMaxSize(),
-                    onGifClick = { gifId -> viewModel.onClickGif(gifId, navController) }
+                    onGifClick = { gifUrlOriginal, gifUrl ->
+                        viewModel.onClickGif(gifUrlOriginal, gifUrl, navController)
+                    }
                 )
             }
 
