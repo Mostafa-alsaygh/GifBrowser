@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 
 fun @receiver:ColorInt Int?.toColor() = this?.run { Color(this) }
@@ -61,11 +60,11 @@ fun String.toTitleCase(): String {
 
 fun <T> List<T>.middle(before: Int = 1) = this[(size / 2) - before]
 
-operator fun<T> Pair<T, T>.get(index: Int) = if (index == 0) first else second
+operator fun <T> Pair<T, T>.get(index: Int) = if (index == 0) first else second
 
 fun Long.toLocalDate(): LocalDate = Instant.ofEpochMilli(this)
     .atZone(ZoneId.systemDefault())
     .toLocalDate()
 
 
-fun<T> List<T>.middle() = this[size / 2]
+fun <T> List<T>.middle() = this[size / 2]

@@ -9,8 +9,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 
 val @receiver:DrawableRes Int.painter: Painter
     @Composable
@@ -35,3 +37,4 @@ fun Modifier.clickableNoRipple(
     )
 }
 
+fun ClipboardManager.copy(text: String?) = text?.let { setText(AnnotatedString(text)) }

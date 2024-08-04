@@ -1,17 +1,17 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
-import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,8 +23,10 @@ class HomeViewModel @Inject constructor(
 
 
     private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> get() = _uiState
+    val uiState = _uiState.asStateFlow()
 
+    private val _uiEvent = MutableSharedFlow<HomeEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     init {
         fetchTrendingAndCategoriesGiphy()
@@ -49,15 +51,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    override fun navigateToSearch(navController: NavController) {
-        navController.navigate(Screen.Search.route)
+    override fun navigateToSearch() {
+        viewModelScope.launch {
+            _uiEvent.emit(HomeEvent.NavigateToSearchScreen)
+        }
     }
 
     override fun onClickGif(gifUrlOriginal: String, gifUrl: String, navController: NavController) {
-        Log.d("INHOMEVIEWMODEL", "${gifUrlOriginal}////$gifUrl")
-
-        navController.navigateToGiphyDetailsScreen(Uri.encode(gifUrlOriginal),Uri.encode(gifUrl))
+        navController.navigateToGiphyDetailsScreen(Uri.encode(gifUrlOriginal), Uri.encode(gifUrl))
     }
 
     override fun navigateToDetailGif() {

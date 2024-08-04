@@ -8,6 +8,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -16,13 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
-import com.example.gifbrowserapp.presentation.features.home.HomeInteractionListener.Preview.navigateToSearch
 import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
@@ -36,7 +37,15 @@ fun HomeScreen(
 ) {
     var state by remember { mutableIntStateOf(0) }
     val titles = listOf("Trends", "Categories")
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiEvent: HomeEvent? by viewModel.uiEvent.collectAsState(null)
+    val listener: HomeInteractionListener = viewModel
+
+    LaunchedEffect(key1 = uiEvent) {
+        when (uiEvent) {
+            HomeEvent.NavigateToSearchScreen -> navController.navigate(Screen.Search.route)
+        }
+    }
 
     Column(
         Modifier
@@ -53,9 +62,8 @@ fun HomeScreen(
             onClear = {},
             leadingIcon = R.drawable.ic_search.painter,
             onActiveChange = {},
-            modifier = Modifier.clickableNoRipple(onClick = { navigateToSearch(navController) })
+            modifier = Modifier.clickableNoRipple(onClick = listener::navigateToSearch)
         ) {}
-
 
         PrimaryTabRow(
             selectedTabIndex = state,
@@ -80,7 +88,7 @@ fun HomeScreen(
         when (state) {
             0 -> {
                 GifsGrid(
-                    gifList = uiState.value.gifsData,
+                    gifList = uiState.gifsData,
                     modifier = Modifier.fillMaxSize(),
                     onGifClick = { gifUrlOriginal, gifUrl ->
                         viewModel.onClickGif(gifUrlOriginal, gifUrl, navController)
@@ -88,7 +96,7 @@ fun HomeScreen(
                 )
             }
 
-            1 -> CategoriesGrid(categories = uiState.value.categories)
+            1 -> CategoriesGrid(categories = uiState.categories)
         }
 
 

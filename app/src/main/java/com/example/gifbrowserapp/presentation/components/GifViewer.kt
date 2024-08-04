@@ -2,21 +2,21 @@ package com.example.gifbrowserapp.presentation.components
 
 import android.net.Uri
 import android.os.Build
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import com.example.gifbrowserapp.data.entities.Original
-import com.example.gifbrowserapp.presentation.design.AppTheme
 
 @Composable
 fun GifViewer(gifUrlOriginal: String?,modifier: Modifier = Modifier) {
@@ -35,7 +35,12 @@ fun GifViewer(gifUrlOriginal: String?,modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
-            CircularProgressIndicator()
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(48.dp))
+            }
         } else {
             SubcomposeAsyncImageContent()
         }
