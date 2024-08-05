@@ -18,6 +18,8 @@ import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.Loading
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.components.SearchGrid
+import com.example.gifbrowserapp.presentation.navigation.Screen
+import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
 
@@ -28,6 +30,7 @@ fun SearchScreen(
 ) {
     val state: SearchUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle("")
+    val event: SearchEvent? by viewModel.event.collectAsState(null)
     val listener: SearchInteractionListener = viewModel
 
     Content(
@@ -35,6 +38,13 @@ fun SearchScreen(
         searchQuery = searchQuery,
         listener = listener
     )
+
+    event?.Listen { currentEvent ->
+        when (currentEvent) {
+            SearchEvent.NavigateBack -> navController.navigateUp()
+            SearchEvent.NavigateToDetailGif -> navController.navigate(Screen.GiphyDetails.route)
+        }
+    }
 }
 
 @Composable
@@ -57,7 +67,6 @@ fun Content(
         onQueryChange = listener::onSearchQueryChange,
         onActiveChange = {},
         onClear = listener::onClearSearch,
-        leadingIcon = R.drawable.ic_search.painter,
         onLeadingClick = {
             focusManager.clearFocus()
             listener.navigateBack()

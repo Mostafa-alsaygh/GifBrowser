@@ -1,6 +1,7 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,10 +43,9 @@ class HomeViewModel @Inject constructor(
                 _uiState.value = HomeUiState(
                     gifsData = gifs.data.toTrendingGifList(),
                     categories = categories.data,
-                    isLoading = false,
+                    isLoading = false
+                )
 
-
-                    )
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
             }
@@ -57,8 +58,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun onClickGif(gifUrlOriginal: String, gifUrl: String, navController: NavController) {
-        navController.navigateToGiphyDetailsScreen(Uri.encode(gifUrlOriginal), Uri.encode(gifUrl))
+    override fun onClickGif(gifUrlOriginal: String, gifWebUrl: String) {
+        viewModelScope.launch {
+            _uiState.value.gifUrlOriginal = gifUrlOriginal
+            _uiState.value.gifWebUrl = gifWebUrl
+            _uiEvent.emit(HomeEvent.NavigateToGiphyDetailsScreen)
+//            emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
+        }
+
     }
 
     override fun navigateToDetailGif() {

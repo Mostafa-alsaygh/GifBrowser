@@ -35,7 +35,7 @@ fun SearchField(
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
     onActiveChange: (Boolean) -> Unit,
-    leadingIcon: Painter ,
+    leadingIcon: Painter = R.drawable.ic_back_arrow.painter,
     onLeadingClick: () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -53,7 +53,7 @@ fun SearchField(
         placeholder = placeholder?.optionalComposable {
             Placeholder(text = placeholder, textAlign = TextAlign.Start)
         },
-        trailingIcon = {
+        leadingIcon = {
             Icon(
                 painter = leadingIcon,
                 contentDescription = null,
@@ -63,7 +63,7 @@ fun SearchField(
                     .clickableNoRipple(onClick = onLeadingClick)
             )
         },
-        leadingIcon = optionalComposable(shouldExecute = active) {
+        trailingIcon = optionalComposable(shouldExecute = active) {
             Icon(
                 imageVector = Icons.Default.Clear,
                 contentDescription = null,

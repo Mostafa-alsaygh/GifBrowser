@@ -7,6 +7,7 @@ import com.example.gifbrowserapp.data.entities.gifData.GifData
 import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
+import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -61,11 +62,11 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun navigateBack() {
-        TODO("Not yet implemented")
+        emitNewEvent(SearchEvent.NavigateBack)
     }
 
     override fun onClearSearch() {
-        TODO("Not yet implemented")
+        _searchQuery.value = emptyString()
     }
 
     override fun navigateToGifDetails() {

@@ -1,5 +1,7 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,13 +22,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
+import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
 import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
 import com.example.gifbrowserapp.presentation.navigation.Screen
+import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
+import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,11 +47,20 @@ fun HomeScreen(
     val uiEvent: HomeEvent? by viewModel.uiEvent.collectAsState(null)
     val listener: HomeInteractionListener = viewModel
 
-    LaunchedEffect(key1 = uiEvent) {
-        when (uiEvent) {
+
+    uiEvent?.Listen { currentEvent ->
+        when (currentEvent) {
+            HomeEvent.NavigateToGiphyDetailsScreen -> {
+                navController.navigateToGiphyDetailsScreen(
+                    Uri.encode(uiState.gifUrlOriginal),
+                    Uri.encode(uiState.gifWebUrl)
+                )
+            }
+
             HomeEvent.NavigateToSearchScreen -> navController.navigate(Screen.Search.route)
         }
     }
+
 
     Column(
         Modifier
@@ -90,8 +105,8 @@ fun HomeScreen(
                 GifsGrid(
                     gifList = uiState.gifsData,
                     modifier = Modifier.fillMaxSize(),
-                    onGifClick = { gifUrlOriginal, gifUrl ->
-                        viewModel.onClickGif(gifUrlOriginal, gifUrl, navController)
+                    onGifClick = { gifUrlOriginal, gifWebUrl ->
+                        viewModel.onClickGif(gifUrlOriginal, gifWebUrl)
                     }
                 )
             }
