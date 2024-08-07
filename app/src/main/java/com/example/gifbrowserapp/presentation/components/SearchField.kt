@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.design.AppTheme
@@ -34,15 +33,20 @@ fun SearchField(
     placeholder: String? = null,
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
+    onSearch: () -> Unit,
     onActiveChange: (Boolean) -> Unit,
     leadingIcon: Painter = R.drawable.ic_back_arrow.painter,
     onLeadingClick: () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
-) {
+
+    ) {
     SearchBar(
         query = query,
         onQueryChange = onQueryChange,
-        onSearch = { onActiveChange(false) },
+        onSearch = {
+            onSearch()
+            onActiveChange(false)
+        },
         active = active,
         enabled = enabled,
         onActiveChange = onActiveChange,
@@ -88,14 +92,3 @@ internal fun Placeholder(text: String, textAlign: TextAlign?) {
         color = AppTheme.colors.contentBorder
     )
 }
-
-//@Composable
-//@Preview(showBackground = true)
-//private fun Preview() = SearchField( query = "",
-//    active = false,
-//    enabled = false,
-//    placeholder = "Search For Gifs",
-//    onQueryChange = {},
-//    onClear = {},
-//    onActiveChange = {}, content = {}
-//    )

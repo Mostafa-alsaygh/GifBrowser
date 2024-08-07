@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.gifbrowserapp.presentation.features.giphyDetails.GiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.navigation.Screen
+import com.example.gifbrowserapp.presentation.utils.extensions.navigate
 
 
 fun NavController.navigateToGiphyDetailsScreen(gifUrlOriginal: String, gifUrl: String) {

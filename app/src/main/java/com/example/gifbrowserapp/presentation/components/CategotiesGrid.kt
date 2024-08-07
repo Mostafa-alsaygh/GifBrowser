@@ -8,16 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.gifbrowserapp.data.entities.categories.CategoryData
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.features.home.HomeViewModel
 
 @Composable
-fun CategoriesGrid(categories: List<CategoryData>) {
+fun CategoriesGrid(categories: List<CategoryData>, viewModel: HomeViewModel) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize().padding(horizontal = AppTheme.sizes.small)
     ) {
         items(categories.size) { index ->
-            CategoryItem(nameOfCategory = categories[index].name.toString()) { }
-            //TODO implement onclick scope
+            CategoryItem(nameOfCategory = categories[index].name.toString()) { categoryName ->
+                    viewModel.onClickCategory(categoryName)
+            }
         }
     }
 }

@@ -5,13 +5,14 @@ import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 
 data class HomeUiState(
     val gifsData: List<TrendingGif> = emptyList(),
-    val categories:List<CategoryData> = emptyList(),
+    val categories: List<CategoryData> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     var gifUrlOriginal: String = emptyString(),
-    var gifWebUrl: String= emptyString(),
+    var gifWebUrl: String = emptyString(),
+    var categoryName: String = emptyString()
 
-    )
+)
 
 
 data class TrendingGif(

@@ -1,7 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -22,17 +20,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
-import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
 import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
-import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
+import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToSearch
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.clickableNoRipple
+import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 import com.example.gifbrowserapp.presentation.utils.extensions.painter
-import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +54,11 @@ fun HomeScreen(
                 )
             }
 
-            HomeEvent.NavigateToSearchScreen -> navController.navigate(Screen.Search.route)
+            HomeEvent.NavigateToSearchScreenWithCategoryName -> navController.navigateToSearch(
+                uiState.categoryName
+            )
+
+            HomeEvent.NavigateToSearchScreen -> navController.navigateToSearch(emptyString())
         }
     }
 
@@ -77,6 +78,7 @@ fun HomeScreen(
             onClear = {},
             leadingIcon = R.drawable.ic_search.painter,
             onActiveChange = {},
+            onSearch = {},
             modifier = Modifier.clickableNoRipple(onClick = listener::navigateToSearch)
         ) {}
 
@@ -111,7 +113,7 @@ fun HomeScreen(
                 )
             }
 
-            1 -> CategoriesGrid(categories = uiState.categories)
+            1 -> CategoriesGrid(categories = uiState.categories, viewModel)
         }
 
 

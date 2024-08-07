@@ -28,7 +28,6 @@ class SearchViewModel @Inject constructor(
     val searchQuery: StateFlow<String> get() = _searchQuery
 
     init {
-        Log.d("InSearchViewModel", "HI")
         searchGifs()
     }
 
@@ -43,7 +42,6 @@ class SearchViewModel @Inject constructor(
                         emit(SearchUiState(isLoading = true))
                         try {
                             val searchResults = giphyRepository.takeSearchData(query)
-                            Log.d("InSearchViewModel", searchResults.data.toSearchedGifList().toString())
                             emit(
                                 SearchUiState(
                                     gifsData = searchResults.data.toSearchedGifList(),
@@ -61,6 +59,10 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun setCategoryName(categoryName: String) {
+        _searchQuery.value = categoryName
+    }
+
     override fun navigateBack() {
         emitNewEvent(SearchEvent.NavigateBack)
     }
@@ -70,7 +72,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun navigateToGifDetails() {
-        TODO("Not yet implemented")
+        emitNewEvent(SearchEvent.NavigateToDetailGif)
     }
 
     override fun onSearchQueryChange(value: String) {

@@ -1,20 +1,15 @@
 package com.example.gifbrowserapp.presentation.features.home
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
-import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,15 +53,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun onClickGif(gifUrlOriginal: String, gifWebUrl: String) {
-        viewModelScope.launch {
-            _uiState.value.gifUrlOriginal = gifUrlOriginal
-            _uiState.value.gifWebUrl = gifWebUrl
-            _uiEvent.emit(HomeEvent.NavigateToGiphyDetailsScreen)
-//            emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
-        }
-
-    }
 
     override fun navigateToDetailGif() {
         TODO("Not yet implemented")
@@ -76,5 +62,21 @@ class HomeViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+
+    override fun onClickGif(gifUrlOriginal: String, gifWebUrl: String) {
+        viewModelScope.launch {
+            _uiState.value.gifUrlOriginal = gifUrlOriginal
+            _uiState.value.gifWebUrl = gifWebUrl
+            _uiEvent.emit(HomeEvent.NavigateToGiphyDetailsScreen)
+        }
+
+    }
+
+    override fun onClickCategory(categoryName: String) {
+        viewModelScope.launch {
+            _uiState.value.categoryName = categoryName
+            _uiEvent.emit(HomeEvent.NavigateToSearchScreenWithCategoryName)
+        }
+    }
 
 }
