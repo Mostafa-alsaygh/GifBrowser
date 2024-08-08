@@ -17,13 +17,15 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 
 @Composable
-fun GifsGrid(
+fun <T> GifsGrid(
     modifier: Modifier = Modifier,
-    gifList: List<TrendingGif>,
-    onGifClick: (String,String) -> Unit
+    gifList: List<T>,
+    onGifClick: (String, String) -> Unit,
+    extractOriginalGifUrl: (T) -> String,
+    extractDownsampledUrl: (T) -> String,
+    extractGifWebUrl: (T) -> String
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -33,7 +35,7 @@ fun GifsGrid(
             items(gifList) { item ->
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(item.images.fixedWidthDownsampled)
+                        .data(extractDownsampledUrl(item))
                         .apply {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                 decoderFactory(ImageDecoderDecoder.Factory())
@@ -45,7 +47,7 @@ fun GifsGrid(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .clickable { onGifClick(item.images.original,item.url) },
+                        .clickable { onGifClick(extractOriginalGifUrl(item), extractGifWebUrl(item)) },
                     contentScale = ContentScale.Crop
                 )
             }

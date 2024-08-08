@@ -3,7 +3,6 @@ package com.example.gifbrowserapp.presentation.features.search
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.gifbrowserapp.data.entities.gifData.GifData
 import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
@@ -23,6 +22,9 @@ class SearchViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> get() = _uiState
+
+    private val _uiEvent = MutableSharedFlow<SearchEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> get() = _searchQuery
@@ -71,15 +73,16 @@ class SearchViewModel @Inject constructor(
         _searchQuery.value = emptyString()
     }
 
-    override fun navigateToGifDetails() {
-        emitNewEvent(SearchEvent.NavigateToDetailGif)
-    }
-
     override fun onSearchQueryChange(value: String) {
         _searchQuery.value = value
     }
 
-    override fun onSelectGif(data: GifData) {
-        TODO("Not yet implemented")
+    override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
+        viewModelScope.launch {
+            Log.d("ONNAVIGATINGSEARCH","ONCLICKSEARCHGIF")
+            _uiState.value.originalGifUrl = originalGifUrl
+            _uiState.value.webGifUrl = webGifUrl
+            _uiEvent.emit(SearchEvent.NavigateToGiphyDetailsScreen)
+        }
     }
 }

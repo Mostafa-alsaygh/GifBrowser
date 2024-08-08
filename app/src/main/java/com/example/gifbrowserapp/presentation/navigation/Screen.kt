@@ -6,9 +6,9 @@ open class Screen(val route: String) {
         fun createRoute(categoryName: String) = "search_screen/$categoryName"
     }
 
-    data object GiphyDetails : Screen("giphy_details_screen/{gifUrlOriginal}/{gifUrl}") {
-        fun createRoute(gifUrlOriginal: String, gifUrl: String) =
-            "giphy_details_screen/$gifUrlOriginal/$gifUrl"
+    data object GiphyDetails : Screen("giphy_details_screen/{originalGifUrl}/{webGifUrl}") {
+        fun createRoute(originalGifUrl: String, webGifUrl: String) =
+            "giphy_details_screen/$originalGifUrl/$webGifUrl"
     }
 
 }

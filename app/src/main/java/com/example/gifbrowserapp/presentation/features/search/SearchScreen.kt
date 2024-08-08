@@ -1,5 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.search
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -14,12 +15,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
+import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.Loading
 import com.example.gifbrowserapp.presentation.components.SearchField
-import com.example.gifbrowserapp.presentation.components.SearchGrid
 import com.example.gifbrowserapp.presentation.navigation.Screen
+import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.logging.Log
 
 @Composable
 fun SearchScreen(
@@ -27,9 +30,9 @@ fun SearchScreen(
     navController: NavController,
     categoryName: String?
 ) {
-    val state: SearchUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle("")
-    val event: SearchEvent? by viewModel.event.collectAsState(null)
+    val uiState: SearchUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiEvent: SearchEvent? by viewModel.uiEvent.collectAsState(null)
     val listener: SearchInteractionListener = viewModel
 
     LaunchedEffect(categoryName) {
@@ -37,15 +40,21 @@ fun SearchScreen(
     }
 
     Content(
-        state = state,
+        state = uiState,
         searchQuery = searchQuery,
         listener = listener,
+        viewModel =viewModel
     )
 
-    event?.Listen { currentEvent ->
+    uiEvent?.Listen { currentEvent ->
         when (currentEvent) {
+            SearchEvent.NavigateToGiphyDetailsScreen ->
+                navController.navigateToGiphyDetailsScreen(
+                    Uri.encode(uiState.originalGifUrl),
+                    Uri.encode(uiState.webGifUrl)
+                )
             SearchEvent.NavigateBack -> navController.navigateUp()
-            SearchEvent.NavigateToDetailGif -> navController.navigate(Screen.GiphyDetails.route)
+
         }
     }
 }
@@ -56,6 +65,7 @@ fun Content(
     state: SearchUiState,
     searchQuery: String,
     listener: SearchInteractionListener,
+    viewModel: SearchViewModel,
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -86,7 +96,13 @@ fun Content(
         if (state.isLoading) {
             Loading(showDialog = true, hintText = stringResource(R.string.please_wait))
         } else {
-            SearchGrid(gifList = state.gifsData)
+            GifsGrid(
+                gifList = state.gifsData,
+                onGifClick = { originalGifUrl, gifWebUrl -> viewModel.onClickGif(originalGifUrl, gifWebUrl) },
+                extractOriginalGifUrl = { it.images.original },
+                extractDownsampledUrl = { it.images.fixedWidthDownsampled },
+                extractGifWebUrl = { it.url }
+            )
         }
     }
 }

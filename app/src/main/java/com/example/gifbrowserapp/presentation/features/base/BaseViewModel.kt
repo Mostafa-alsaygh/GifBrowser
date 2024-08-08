@@ -35,6 +35,7 @@ abstract class BaseViewModel<S, E>(initState: S) : ViewModel() {
 
     private val _event = MutableSharedFlow<E?>()
     val event = _event
+    //todo use this bro
 
     protected fun <T> tryToExecute(
         block: suspend () -> T,

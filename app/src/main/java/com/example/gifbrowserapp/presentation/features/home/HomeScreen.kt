@@ -49,8 +49,8 @@ fun HomeScreen(
         when (currentEvent) {
             HomeEvent.NavigateToGiphyDetailsScreen -> {
                 navController.navigateToGiphyDetailsScreen(
-                    Uri.encode(uiState.gifUrlOriginal),
-                    Uri.encode(uiState.gifWebUrl)
+                    Uri.encode(uiState.originalGifUrl),
+                    Uri.encode(uiState.webGifUrl)
                 )
             }
 
@@ -103,15 +103,14 @@ fun HomeScreen(
         }
 
         when (state) {
-            0 -> {
-                GifsGrid(
-                    gifList = uiState.gifsData,
-                    modifier = Modifier.fillMaxSize(),
-                    onGifClick = { gifUrlOriginal, gifWebUrl ->
-                        viewModel.onClickGif(gifUrlOriginal, gifWebUrl)
-                    }
-                )
-            }
+            0 -> GifsGrid(
+                gifList = uiState.gifsData,
+                onGifClick = { originalGifUrl, webGifUrl -> viewModel.onClickGif(originalGifUrl, webGifUrl) },
+                extractOriginalGifUrl = { it.images.original },
+                extractDownsampledUrl = { it.images.fixedWidthDownsampled },
+                extractGifWebUrl = { it.url }
+            )
+
 
             1 -> CategoriesGrid(categories = uiState.categories, viewModel)
         }

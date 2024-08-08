@@ -8,8 +8,8 @@ data class HomeUiState(
     val categories: List<CategoryData> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    var gifUrlOriginal: String = emptyString(),
-    var gifWebUrl: String = emptyString(),
+    var originalGifUrl: String = emptyString(),
+    var webGifUrl: String = emptyString(),
     var categoryName: String = emptyString()
 
 )

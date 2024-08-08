@@ -63,10 +63,10 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    override fun onClickGif(gifUrlOriginal: String, gifWebUrl: String) {
+    override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
         viewModelScope.launch {
-            _uiState.value.gifUrlOriginal = gifUrlOriginal
-            _uiState.value.gifWebUrl = gifWebUrl
+            _uiState.value.originalGifUrl = originalGifUrl
+            _uiState.value.webGifUrl = webGifUrl
             _uiEvent.emit(HomeEvent.NavigateToGiphyDetailsScreen)
         }
 

@@ -19,15 +19,15 @@ fun NavGraphBuilder.giphyDetailsDestination(navController: NavController) {
     composable(
         Screen.GiphyDetails.route,
         arguments = listOf(
-            navArgument("gifUrlOriginal") { type = NavType.StringType },
-            navArgument("gifUrl") { type = NavType.StringType }
+            navArgument("originalGifUrl") { type = NavType.StringType },
+            navArgument("webGifUrl") { type = NavType.StringType }
         )
     ) { backStackEntry ->
         GiphyDetailsScreen(
             viewModel = hiltViewModel(),
             navController = navController,
-            gifUrlOriginal = backStackEntry.arguments?.getString("gifUrlOriginal"),
-            gifUrl = backStackEntry.arguments?.getString("gifUrl")
+            gifUrlOriginal = backStackEntry.arguments?.getString("originalGifUrl"),
+            gifUrl = backStackEntry.arguments?.getString("webGifUrl")
 
         )
     }
