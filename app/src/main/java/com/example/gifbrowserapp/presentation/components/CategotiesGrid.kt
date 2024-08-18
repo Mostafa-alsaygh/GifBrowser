@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.gifbrowserapp.data.entities.categories.CategoryData
+import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
 import com.example.gifbrowserapp.presentation.design.AppTheme
 import com.example.gifbrowserapp.presentation.features.home.HomeViewModel
 

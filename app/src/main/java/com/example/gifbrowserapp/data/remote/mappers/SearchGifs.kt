@@ -1,8 +1,6 @@
 package com.example.gifbrowserapp.data.remote.mappers
 
-import com.example.gifbrowserapp.data.entities.gifData.GifData
-import com.example.gifbrowserapp.presentation.features.home.GifImages
-import com.example.gifbrowserapp.presentation.features.home.TrendingGif
+import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 import com.example.gifbrowserapp.presentation.features.search.SearchedGif
 import com.example.gifbrowserapp.presentation.features.search.SearchedGifImages
 

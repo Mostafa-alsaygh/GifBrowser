@@ -1,8 +1,8 @@
-package com.example.gifbrowserapp.data.entities.gifData
+package com.example.gifbrowserapp.data.entities.remote.gifData
 
 
-import com.example.gifbrowserapp.data.entities.FixedWidthDownsampled
-import com.example.gifbrowserapp.data.entities.Original
+import com.example.gifbrowserapp.data.entities.remote.FixedWidthDownsampled
+import com.example.gifbrowserapp.data.entities.remote.Original
 import com.google.gson.annotations.SerializedName
 
 data class GifImages(

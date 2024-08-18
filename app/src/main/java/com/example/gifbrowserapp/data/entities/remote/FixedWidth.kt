@@ -1,11 +1,15 @@
-package com.example.gifbrowserapp.data.entities
+package com.example.gifbrowserapp.data.entities.remote
 
 
 import com.google.gson.annotations.SerializedName
 
-data class FixedWidthDownsampled(
+data class FixedWidth(
     @SerializedName("height")
     val height: String?,
+    @SerializedName("mp4")
+    val mp4: String?,
+    @SerializedName("mp4_size")
+    val mp4Size: String?,
     @SerializedName("size")
     val size: String?,
     @SerializedName("url")

@@ -66,7 +66,10 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun navigateBack() {
-        emitNewEvent(SearchEvent.NavigateBack)
+        Log.d("ONNAVIGATIONBACK","CLICKED")
+        viewModelScope.launch {
+            _uiEvent.emit(SearchEvent.NavigateBack)
+        }
     }
 
     override fun onClearSearch() {

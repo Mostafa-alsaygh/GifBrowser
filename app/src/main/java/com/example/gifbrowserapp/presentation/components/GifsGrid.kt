@@ -23,8 +23,8 @@ fun <T> GifsGrid(
     modifier: Modifier = Modifier,
     gifList: List<T>,
     onGifClick: (String, String) -> Unit,
-    extractOriginalGifUrl: (T) -> String,
     extractDownsampledUrl: (T) -> String,
+    extractOriginalGifUrl: (T) -> String,
     extractGifWebUrl: (T) -> String
 ) {
     LazyVerticalStaggeredGrid(

@@ -1,6 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.home
 
-import com.example.gifbrowserapp.data.entities.categories.CategoryData
+import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 
 data class HomeUiState(

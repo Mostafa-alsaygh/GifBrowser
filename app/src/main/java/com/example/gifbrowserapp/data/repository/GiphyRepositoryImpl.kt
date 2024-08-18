@@ -1,11 +1,10 @@
 package com.example.gifbrowserapp.data.repository
 
-import com.example.gifbrowserapp.data.entities.ApiResponseRemote
-import com.example.gifbrowserapp.data.entities.categories.CategoryData
-import com.example.gifbrowserapp.data.entities.gifData.GifData
+import com.example.gifbrowserapp.data.entities.remote.ApiResponseRemote
+import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
+import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.utils.ApiUtils
-import retrofit2.http.Query
 import javax.inject.Inject
 
 class GiphyRepositoryImpl @Inject constructor(

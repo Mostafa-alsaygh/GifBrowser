@@ -1,4 +1,4 @@
-package com.example.gifbrowserapp.data.entities.categories
+package com.example.gifbrowserapp.data.entities.remote.categories
 
 
 import com.google.gson.annotations.SerializedName

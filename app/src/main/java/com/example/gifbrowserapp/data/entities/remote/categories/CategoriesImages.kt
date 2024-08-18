@@ -1,9 +1,9 @@
-package com.example.gifbrowserapp.data.entities.categories
+package com.example.gifbrowserapp.data.entities.remote.categories
 
 
-import com.example.gifbrowserapp.data.entities.Original
-import com.example.gifbrowserapp.data.entities.FixedWidth
-import com.example.gifbrowserapp.data.entities.FixedWidthDownsampled
+import com.example.gifbrowserapp.data.entities.remote.Original
+import com.example.gifbrowserapp.data.entities.remote.FixedWidth
+import com.example.gifbrowserapp.data.entities.remote.FixedWidthDownsampled
 import com.google.gson.annotations.SerializedName
 
 data class CategoriesImages(

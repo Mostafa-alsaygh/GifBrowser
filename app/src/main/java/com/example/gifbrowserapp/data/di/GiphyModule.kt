@@ -1,11 +1,19 @@
 package com.example.gifbrowserapp.data.di
 
+import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.gifbrowserapp.data.local.FavoriteGifDao
+import com.example.gifbrowserapp.data.local.FavoriteGifDatabase
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.GiphyRepositoryImpl
+import com.example.gifbrowserapp.data.repository.LocalGifsRepository
+import com.example.gifbrowserapp.data.repository.LocalGifsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,5 +38,26 @@ object GiphyModule {
     fun providesGiphyRepository(giphyApi: GiphyApiService): GiphyRepository {
         return GiphyRepositoryImpl(giphyApi = giphyApi)
     }
+
+    @Provides
+    @Singleton
+    fun providesFavoriteGifDatabase(
+        @ApplicationContext
+        context: Context
+    ): FavoriteGifDatabase =
+        Room.databaseBuilder(context, FavoriteGifDatabase::class.java, "FavoriteGifDb")
+            .build()
+
+    @Provides
+    @Singleton
+    fun providesFavoriteGifDao(
+        favoriteGifDatabase: FavoriteGifDatabase
+    ): FavoriteGifDao = favoriteGifDatabase.favoriteGifDao
+
+    @Provides
+    @Singleton
+    fun providesLocalGifsRepository(
+        favoriteGifDao: FavoriteGifDao
+    ): LocalGifsRepository = LocalGifsRepositoryImpl(favoriteGifDao = favoriteGifDao)
 
 }

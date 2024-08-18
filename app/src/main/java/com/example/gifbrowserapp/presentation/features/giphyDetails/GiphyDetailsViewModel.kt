@@ -1,9 +1,7 @@
 package com.example.gifbrowserapp.presentation.features.giphyDetails
 
-import com.example.gifbrowserapp.data.entities.Original
-import com.example.gifbrowserapp.data.entities.gifData.GifData
+import com.example.gifbrowserapp.data.entities.remote.Original
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
-import com.example.gifbrowserapp.presentation.features.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -3,6 +3,7 @@ package com.example.gifbrowserapp.presentation.features.home
 import androidx.lifecycle.viewModelScope
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
+import com.example.gifbrowserapp.data.repository.LocalGifsRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,16 +15,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val giphyRepository: GiphyRepository
+    private val giphyRepository: GiphyRepository,
+    private val favoriteGifRepository: LocalGifsRepository
 ) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
     HomeInteractionListener {
-
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
+
     private val _uiEvent = MutableSharedFlow<HomeEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+
 
     init {
         fetchTrendingAndCategoriesGiphy()
@@ -52,16 +56,6 @@ class HomeViewModel @Inject constructor(
             _uiEvent.emit(HomeEvent.NavigateToSearchScreen)
         }
     }
-
-
-    override fun navigateToDetailGif() {
-        TODO("Not yet implemented")
-    }
-
-    override fun navigateToCategoryGifsScreen() {
-        TODO("Not yet implemented")
-    }
-
 
     override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
         viewModelScope.launch {

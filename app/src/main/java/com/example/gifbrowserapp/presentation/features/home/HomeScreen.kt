@@ -38,8 +38,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavController,
 ) {
-    var state by remember { mutableIntStateOf(0) }
-    val titles = listOf("Trends", "Categories")
+    var tabRowState by remember { mutableIntStateOf(0) }
+    val titles = listOf("Trends", "Categories", "Favorites")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uiEvent: HomeEvent? by viewModel.uiEvent.collectAsState(null)
     val listener: HomeInteractionListener = viewModel
@@ -83,14 +83,14 @@ fun HomeScreen(
         ) {}
 
         PrimaryTabRow(
-            selectedTabIndex = state,
+            selectedTabIndex = tabRowState,
             containerColor = AppTheme.colors.surface,
             contentColor = AppTheme.colors.primary
         ) {
             titles.forEachIndexed { index, title ->
                 Tab(
-                    selected = state == index,
-                    onClick = { state = index },
+                    selected = tabRowState == index,
+                    onClick = { tabRowState = index },
                     text = {
                         Text(
                             text = title,
@@ -102,19 +102,20 @@ fun HomeScreen(
             }
         }
 
-        when (state) {
+        when (tabRowState) {
             0 -> GifsGrid(
                 gifList = uiState.gifsData,
                 onGifClick = { originalGifUrl, webGifUrl -> viewModel.onClickGif(originalGifUrl, webGifUrl) },
                 extractOriginalGifUrl = { it.images.original },
                 extractDownsampledUrl = { it.images.fixedWidthDownsampled },
-                extractGifWebUrl = { it.url }
+                extractGifWebUrl = { it.url },
+                modifier = Modifier.padding(top = 16.dp)
             )
 
-
             1 -> CategoriesGrid(categories = uiState.categories, viewModel)
-        }
 
+
+        }
 
     }
 }

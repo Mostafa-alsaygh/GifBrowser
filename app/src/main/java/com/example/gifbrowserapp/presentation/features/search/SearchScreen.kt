@@ -20,9 +20,11 @@ import com.example.gifbrowserapp.presentation.components.Loading
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
+import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToHome
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.logging.Log
+import timber.log.Timber
 
 @Composable
 fun SearchScreen(
