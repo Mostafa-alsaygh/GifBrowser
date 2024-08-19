@@ -23,8 +23,6 @@ class SearchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> get() = _uiState
 
-    private val _uiEvent = MutableSharedFlow<SearchEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> get() = _searchQuery
@@ -65,13 +63,6 @@ class SearchViewModel @Inject constructor(
         _searchQuery.value = categoryName
     }
 
-    override fun navigateBack() {
-        Log.d("ONNAVIGATIONBACK","CLICKED")
-        viewModelScope.launch {
-            _uiEvent.emit(SearchEvent.NavigateBack)
-        }
-    }
-
     override fun onClearSearch() {
         _searchQuery.value = emptyString()
     }
@@ -80,12 +71,15 @@ class SearchViewModel @Inject constructor(
         _searchQuery.value = value
     }
 
-    override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
+    override fun navigateBack() {
         viewModelScope.launch {
-            Log.d("ONNAVIGATINGSEARCH","ONCLICKSEARCHGIF")
-            _uiState.value.originalGifUrl = originalGifUrl
-            _uiState.value.webGifUrl = webGifUrl
-            _uiEvent.emit(SearchEvent.NavigateToGiphyDetailsScreen)
+            emitNewEvent(SearchEvent.NavigateBack)
         }
+    }
+
+    override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
+        _uiState.value.originalGifUrl = originalGifUrl
+        _uiState.value.webGifUrl = webGifUrl
+            emitNewEvent(SearchEvent.NavigateToGiphyDetailsScreen)
     }
 }

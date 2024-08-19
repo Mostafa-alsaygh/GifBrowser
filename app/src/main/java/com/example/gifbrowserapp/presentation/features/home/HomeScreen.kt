@@ -41,7 +41,7 @@ fun HomeScreen(
     var tabRowState by remember { mutableIntStateOf(0) }
     val titles = listOf("Trends", "Categories", "Favorites")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val uiEvent: HomeEvent? by viewModel.uiEvent.collectAsState(null)
+    val uiEvent: HomeEvent? by viewModel.event.collectAsState(null)
     val listener: HomeInteractionListener = viewModel
 
 
@@ -105,7 +105,12 @@ fun HomeScreen(
         when (tabRowState) {
             0 -> GifsGrid(
                 gifList = uiState.gifsData,
-                onGifClick = { originalGifUrl, webGifUrl -> viewModel.onClickGif(originalGifUrl, webGifUrl) },
+                onGifClick = { originalGifUrl, webGifUrl ->
+                    viewModel.onClickGif(
+                        originalGifUrl,
+                        webGifUrl
+                    )
+                },
                 extractOriginalGifUrl = { it.images.original },
                 extractDownsampledUrl = { it.images.fixedWidthDownsampled },
                 extractGifWebUrl = { it.url },

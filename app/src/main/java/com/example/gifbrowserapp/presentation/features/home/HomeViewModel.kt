@@ -6,9 +6,7 @@ import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,17 +14,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val giphyRepository: GiphyRepository,
-    private val favoriteGifRepository: LocalGifsRepository
+    private val favoriteGifRepository: LocalGifsRepository,
 ) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
     HomeInteractionListener {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
-
-
-    private val _uiEvent = MutableSharedFlow<HomeEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
-
 
 
     init {
@@ -52,25 +45,18 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun navigateToSearch() {
-        viewModelScope.launch {
-            _uiEvent.emit(HomeEvent.NavigateToSearchScreen)
-        }
+        emitNewEvent(HomeEvent.NavigateToSearchScreen)
     }
 
     override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
-        viewModelScope.launch {
-            _uiState.value.originalGifUrl = originalGifUrl
-            _uiState.value.webGifUrl = webGifUrl
-            _uiEvent.emit(HomeEvent.NavigateToGiphyDetailsScreen)
-        }
-
+        _uiState.value.originalGifUrl = originalGifUrl
+        _uiState.value.webGifUrl = webGifUrl
+        emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
     }
 
     override fun onClickCategory(categoryName: String) {
-        viewModelScope.launch {
-            _uiState.value.categoryName = categoryName
-            _uiEvent.emit(HomeEvent.NavigateToSearchScreenWithCategoryName)
-        }
+        _uiState.value.categoryName = categoryName
+        emitNewEvent(HomeEvent.NavigateToSearchScreenWithCategoryName)
     }
 
 }

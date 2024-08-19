@@ -34,7 +34,7 @@ fun SearchScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle("")
     val uiState: SearchUiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val uiEvent: SearchEvent? by viewModel.uiEvent.collectAsState(null)
+    val uiEvent: SearchEvent? by viewModel.event.collectAsState(null)
     val listener: SearchInteractionListener = viewModel
 
     LaunchedEffect(categoryName) {
