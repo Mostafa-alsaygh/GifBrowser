@@ -1,16 +1,16 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import com.example.gifbrowserapp.data.entities.local.GifItem
 import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 
 data class HomeUiState(
     val gifsData: List<TrendingGif> = emptyList(),
     val categories: List<CategoryData> = emptyList(),
+    val selectedGif: GifItem? = null,
+    var categoryName: String = emptyString(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    var originalGifUrl: String = emptyString(),
-    var webGifUrl: String = emptyString(),
-    var categoryName: String = emptyString()
+    val errorMessage: String? = null
 
 )
 

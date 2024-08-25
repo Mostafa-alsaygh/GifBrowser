@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class FavoriteGif(
     @PrimaryKey
-    val id: Int,
+    val id: String,
     val originalGifUrl: String,
     val webGifUrl: String,
     val date: Long

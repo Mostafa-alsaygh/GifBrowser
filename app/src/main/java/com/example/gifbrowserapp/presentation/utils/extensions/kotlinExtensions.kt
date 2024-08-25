@@ -4,12 +4,60 @@ import androidx.annotation.ColorInt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.graphics.Color
+import com.example.gifbrowserapp.data.entities.local.FavoriteGif
+import com.example.gifbrowserapp.data.entities.local.GifImage
+import com.example.gifbrowserapp.data.entities.local.GifItem
+import com.example.gifbrowserapp.presentation.features.home.TrendingGif
+import com.example.gifbrowserapp.presentation.features.search.SearchedGif
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
 
 fun @receiver:ColorInt Int?.toColor() = this?.run { Color(this) }
+
+
+fun TrendingGif.toGifItem(): GifItem {
+    return GifItem(
+        id = this.id,
+        url = this.url,
+        images = GifImage(
+            original = this.images.original,
+            fixedWidthDownsampled = this.images.fixedWidthDownsampled
+        )
+    )
+}
+
+fun SearchedGif.toGifItem(): GifItem {
+    return GifItem(
+        id = this.id,
+        url = this.url,
+        images = GifImage(
+            original = this.images.original,
+            fixedWidthDownsampled = this.images.fixedWidthDownsampled
+        )
+    )
+}
+
+fun FavoriteGif.toGifItem(): GifItem {
+    return GifItem(
+        id = this.id,
+        url = this.webGifUrl,
+        images = GifImage(
+            original = this.originalGifUrl,
+            fixedWidthDownsampled = emptyString()
+        )
+    )
+}
+
+fun GifItem.toFavoriteGif(): FavoriteGif {
+    return FavoriteGif(
+        id = this.id,
+        originalGifUrl = this.images.original,
+        webGifUrl = this.url,
+        date = System.currentTimeMillis()
+    )
+}
 
 
 val Map<String, List<String>>.keysList

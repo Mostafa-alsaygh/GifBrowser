@@ -1,10 +1,10 @@
 package com.example.gifbrowserapp.presentation.features.localGiphy
 
-sealed interface FavoriteGifEvent {
-    object MakeGifFavorite : FavoriteGifEvent
-    data class UnFavoriteGif(val id: Int) : FavoriteGifEvent
-    data class SetID(val id: Int) : FavoriteGifEvent
-    data class SetUrl(val url: String) : FavoriteGifEvent
-    data class SetWebUrl(val webUrl: String) : FavoriteGifEvent
+import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 
+
+sealed interface FavoriteGifEvent {
+    object LoadFavorites : FavoriteGifEvent
+    data class AddFavorite(val gif: FavoriteGif) : FavoriteGifEvent
+    data class RemoveFavorite(val gif: FavoriteGif) : FavoriteGifEvent
 }

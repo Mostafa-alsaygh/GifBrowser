@@ -1,12 +1,12 @@
 package com.example.gifbrowserapp.presentation.features.search
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
+import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -77,9 +77,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    override fun onClickGif(originalGifUrl: String, webGifUrl: String) {
-        _uiState.value.originalGifUrl = originalGifUrl
-        _uiState.value.webGifUrl = webGifUrl
-            emitNewEvent(SearchEvent.NavigateToGiphyDetailsScreen)
+    override fun onClickGif(searchedGif: SearchedGif) {
+        val gifItem = searchedGif.toGifItem()
+        _uiState.value = _uiState.value.copy(selectedGif = gifItem)
+        emitNewEvent(SearchEvent.NavigateToGiphyDetailsScreen)
     }
 }

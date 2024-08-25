@@ -21,11 +21,9 @@ import coil.request.ImageRequest
 @Composable
 fun <T> GifsGrid(
     modifier: Modifier = Modifier,
-    gifList: List<T>,
-    onGifClick: (String, String) -> Unit,
-    extractDownsampledUrl: (T) -> String,
-    extractOriginalGifUrl: (T) -> String,
-    extractGifWebUrl: (T) -> String
+    gifList: List<T> = emptyList(),
+    onGifClick: (T) -> Unit,
+    extractUrl: (T) -> String,
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -35,7 +33,7 @@ fun <T> GifsGrid(
             items(gifList) { item ->
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(extractDownsampledUrl(item))
+                        .data(extractUrl(item))
                         .apply {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                 decoderFactory(ImageDecoderDecoder.Factory())
@@ -47,7 +45,7 @@ fun <T> GifsGrid(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .clickable { onGifClick(extractOriginalGifUrl(item), extractGifWebUrl(item)) },
+                        .clickable { onGifClick(item) },
                     contentScale = ContentScale.Crop
                 )
             }

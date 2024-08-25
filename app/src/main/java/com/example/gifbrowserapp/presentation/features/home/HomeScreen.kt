@@ -1,6 +1,5 @@
 package com.example.gifbrowserapp.presentation.features.home
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +8,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,6 +24,7 @@ import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToSearch
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
@@ -38,20 +39,20 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavController,
 ) {
-    var tabRowState by remember { mutableIntStateOf(0) }
-    val titles = listOf("Trends", "Categories", "Favorites")
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uiEvent: HomeEvent? by viewModel.event.collectAsState(null)
+    val favoriteGifsState by viewModel.favoriteGifState.collectAsState()
     val listener: HomeInteractionListener = viewModel
 
+    var tabRowState by remember { mutableIntStateOf(0) }
+    val titles = listOf("Trends", "Categories", "Favorites")
 
     uiEvent?.Listen { currentEvent ->
         when (currentEvent) {
             HomeEvent.NavigateToGiphyDetailsScreen -> {
-                navController.navigateToGiphyDetailsScreen(
-                    Uri.encode(uiState.originalGifUrl),
-                    Uri.encode(uiState.webGifUrl)
-                )
+                uiState.selectedGif?.let { gifItem ->
+                    navController.navigateToGiphyDetailsScreen(gifItem)
+                }
             }
 
             HomeEvent.NavigateToSearchScreenWithCategoryName -> navController.navigateToSearch(
@@ -62,6 +63,9 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(FavoriteGifEvent.LoadFavorites)
+    }
 
     Column(
         Modifier
@@ -105,22 +109,23 @@ fun HomeScreen(
         when (tabRowState) {
             0 -> GifsGrid(
                 gifList = uiState.gifsData,
-                onGifClick = { originalGifUrl, webGifUrl ->
-                    viewModel.onClickGif(
-                        originalGifUrl,
-                        webGifUrl
-                    )
+                onGifClick = { trendingGif ->
+                    viewModel.onClickGif(trendingGif)
                 },
-                extractOriginalGifUrl = { it.images.original },
-                extractDownsampledUrl = { it.images.fixedWidthDownsampled },
-                extractGifWebUrl = { it.url },
+                extractUrl = { it.images.fixedWidthDownsampled },
                 modifier = Modifier.padding(top = 16.dp)
             )
 
             1 -> CategoriesGrid(categories = uiState.categories, viewModel)
 
-
+            2 -> GifsGrid(
+                gifList = favoriteGifsState.favoriteGifs,
+                onGifClick = { gifItem -> viewModel.onClickFavoriteGif(gifItem) },
+                extractUrl = { favoriteGif ->
+                    favoriteGif.originalGifUrl
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
-
     }
 }

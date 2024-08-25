@@ -2,9 +2,8 @@ package com.example.gifbrowserapp.data.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.gifbrowserapp.data.local.FavoriteGifDao
-import com.example.gifbrowserapp.data.local.FavoriteGifDatabase
+import com.example.gifbrowserapp.data.local.LocalGifDatabase
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.GiphyRepositoryImpl
@@ -44,14 +43,14 @@ object GiphyModule {
     fun providesFavoriteGifDatabase(
         @ApplicationContext
         context: Context
-    ): FavoriteGifDatabase =
-        Room.databaseBuilder(context, FavoriteGifDatabase::class.java, "FavoriteGifDb")
+    ): LocalGifDatabase =
+        Room.databaseBuilder(context, LocalGifDatabase::class.java, "FavoriteGifDb")
             .build()
 
     @Provides
     @Singleton
     fun providesFavoriteGifDao(
-        favoriteGifDatabase: FavoriteGifDatabase
+        favoriteGifDatabase: LocalGifDatabase
     ): FavoriteGifDao = favoriteGifDatabase.favoriteGifDao
 
     @Provides

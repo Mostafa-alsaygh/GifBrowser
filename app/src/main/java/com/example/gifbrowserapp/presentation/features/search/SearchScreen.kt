@@ -1,6 +1,5 @@
 package com.example.gifbrowserapp.presentation.features.search
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,13 +17,9 @@ import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.Loading
 import com.example.gifbrowserapp.presentation.components.SearchField
-import com.example.gifbrowserapp.presentation.navigation.Screen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
-import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToHome
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.logging.Log
-import timber.log.Timber
 
 @Composable
 fun SearchScreen(
@@ -45,18 +40,17 @@ fun SearchScreen(
         state = uiState,
         searchQuery = searchQuery,
         listener = listener,
-        viewModel =viewModel
+        viewModel = viewModel
     )
 
     uiEvent?.Listen { currentEvent ->
         when (currentEvent) {
-            SearchEvent.NavigateToGiphyDetailsScreen ->
-                navController.navigateToGiphyDetailsScreen(
-                    Uri.encode(uiState.originalGifUrl),
-                    Uri.encode(uiState.webGifUrl)
-                )
+            SearchEvent.NavigateToGiphyDetailsScreen -> {
+                uiState.selectedGif?.let { gifItem ->
+                    navController.navigateToGiphyDetailsScreen(gifItem)
+                }
+            }
             SearchEvent.NavigateBack -> navController.navigateUp()
-
         }
     }
 }
@@ -100,12 +94,11 @@ fun Content(
         } else {
             GifsGrid(
                 gifList = state.gifsData,
-                onGifClick = { originalGifUrl, gifWebUrl -> viewModel.onClickGif(originalGifUrl, gifWebUrl) },
-                extractOriginalGifUrl = { it.images.original },
-                extractDownsampledUrl = { it.images.fixedWidthDownsampled },
-                extractGifWebUrl = { it.url }
+                onGifClick = { searchedGif ->
+                    viewModel.onClickGif(searchedGif)
+                },
+                extractUrl = { it.images.fixedWidthDownsampled },
             )
         }
     }
 }
-

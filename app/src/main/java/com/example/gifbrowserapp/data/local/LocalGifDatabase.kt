@@ -9,7 +9,7 @@ import com.example.gifbrowserapp.data.entities.local.FavoriteGif
     entities = [FavoriteGif::class] ,
     version = 1
 )
-abstract class FavoriteGifDatabase : RoomDatabase() {
+abstract class LocalGifDatabase : RoomDatabase() {
 
     abstract val favoriteGifDao: FavoriteGifDao
 
