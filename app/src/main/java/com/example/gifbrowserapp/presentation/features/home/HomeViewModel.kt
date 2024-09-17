@@ -1,17 +1,27 @@
 package com.example.gifbrowserapp.presentation.features.home
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import coil.ImageLoader
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
+import com.example.gifbrowserapp.data.utils.NetworkMonitor
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarAction
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarController
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarEvent
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifState
 import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,8 +29,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val giphyRepository: GiphyRepository,
     private val localGifsRepository: LocalGifsRepository,
+    private val networkMonitor: NetworkMonitor
 ) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
     HomeInteractionListener {
 
@@ -30,10 +42,14 @@ class HomeViewModel @Inject constructor(
     private val _favoriteGifState = MutableStateFlow(FavoriteGifState())
     val favoriteGifState = _favoriteGifState.asStateFlow()
 
+    private val _networkStatus = MutableStateFlow(true) // Default to connected
+    val networkStatus: StateFlow<Boolean> = _networkStatus
+
 
     init {
         fetchTrendingAndCategoriesGiphy()
         loadFavorites()
+        monitorNetworkStatus()
     }
 
     fun onEvent(event: FavoriteGifEvent) {
@@ -50,6 +66,10 @@ class HomeViewModel @Inject constructor(
             try {
                 val gifs = giphyRepository.takeTrendingGifs()
                 val categories = giphyRepository.takeCategoriesOfGiphy()
+                val gifUrls =
+                    gifs.data.map { it.images?.fixedWidthDownsampled?.url } // Extract URLs to preload
+                //todo preload gifs, Coil catching {preloadGifs}
+                preloadGifs(gifUrls, context = context)
                 _uiState.value = HomeUiState(
                     gifsData = gifs.data.toTrendingGifList(),
                     categories = categories.data,
@@ -98,10 +118,24 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _favoriteGifState.update { it.copy(isLoading = false, error = e.message) }
-
             }
         }
     }
+
+
+    fun preloadGifs(gifUrls: List<String?>, context: Context) {
+        val imageLoader = ImageLoader(context)
+        gifUrls.forEach { url ->
+            val request = ImageRequest.Builder(context)
+                .data(url)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .build()
+
+            imageLoader.enqueue(request)
+        }
+    }
+
 
     private fun addFavoriteGif(gif: FavoriteGif) {
         viewModelScope.launch {
@@ -125,4 +159,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun monitorNetworkStatus() {
+        viewModelScope.launch {
+            networkMonitor.isConnected.collect { isConnected ->
+                if (!isConnected) {
+                    SnackbarController.sendEvent(
+                        event = SnackbarEvent(
+                            message = "No internet connection",
+                            action = SnackbarAction("Retry") {
+                                retryFetchingData()
+                            }
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun retryFetchingData() {
+        fetchTrendingAndCategoriesGiphy()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        networkMonitor.unregisterNetworkCallback()
+    }
 }

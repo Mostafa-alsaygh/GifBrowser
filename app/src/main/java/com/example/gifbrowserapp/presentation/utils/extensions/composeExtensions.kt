@@ -1,5 +1,6 @@
 package com.example.gifbrowserapp.presentation.utils.extensions
 
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
@@ -10,14 +11,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 
 val @receiver:DrawableRes Int.painter: Painter
     @Composable
     get() = painterResource(id = this)
 
+
+@Composable
+fun imageRequester(): ImageRequest.Builder {
+    return ImageRequest.Builder(LocalContext.current)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+        .diskCachePolicy(CachePolicy.ENABLED).crossfade(true)
+        .apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                decoderFactory(ImageDecoderDecoder.Factory())
+            } else {
+                decoderFactory(GifDecoder.Factory())
+            }
+        }
+}
 
 fun Modifier.clickableNoRipple(
     interactionSource: MutableInteractionSource? = null,

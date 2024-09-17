@@ -10,7 +10,8 @@ data class HomeUiState(
     val selectedGif: GifItem? = null,
     var categoryName: String = emptyString(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isNetworkError: Boolean = false
 
 )
 

@@ -1,9 +1,15 @@
 package com.example.gifbrowserapp.presentation.utils.extensions
 
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.entities.local.GifImage
 import com.example.gifbrowserapp.data.entities.local.GifItem
@@ -53,7 +59,8 @@ fun FavoriteGif.toGifItem(): GifItem {
 fun GifItem.toFavoriteGif(): FavoriteGif {
     return FavoriteGif(
         id = this.id,
-        originalGifUrl = this.images.original,
+        //todo change to original
+        originalGifUrl = this.images.fixedWidthDownsampled,
         webGifUrl = this.url,
         date = System.currentTimeMillis()
     )
