@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteGifDao {
     @Query("SELECT * FROM FavoriteGif WHERE id = :id")
-    fun getFavoriteGifById(id: Int): FavoriteGif
+    fun getFavoriteGifById(id: String): FavoriteGif
 
     @Query("SELECT * FROM FavoriteGif ORDER BY date DESC")
     fun getFavoriteGifOrderedByDate(): Flow<List<FavoriteGif>>

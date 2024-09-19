@@ -1,5 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.giphyDetails
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gifbrowserapp.R
@@ -26,6 +28,7 @@ import com.example.gifbrowserapp.data.entities.local.GifItem
 import com.example.gifbrowserapp.presentation.components.CustomButton
 import com.example.gifbrowserapp.presentation.components.GifViewer
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.utils.extensions.Listen
 import com.example.gifbrowserapp.presentation.utils.extensions.copy
 
 @Composable
@@ -37,8 +40,9 @@ fun GiphyDetailsScreen(
     val clipboardManager = LocalClipboardManager.current
     val listener: GiphyDetailsInteractionListener = viewModel
     val gifItem by viewModel.gifItem.collectAsState()
-    val uiEvent: GiphyDetailsEvent? by viewModel.event.collectAsState(null)
     val uiState: GiphyDetailsUiState by viewModel.uiState.collectAsState()
+    val uiEvent: GiphyDetailsEvent? by viewModel.event.collectAsState(null)
+    val context = LocalContext.current
 
     LaunchedEffect(gifItemSent) {
         gifItemSent?.let {
@@ -46,7 +50,21 @@ fun GiphyDetailsScreen(
         }
     }
 
+    uiEvent.Listen { currentEvent ->
+        when (currentEvent) {
+            is GiphyDetailsEvent.ShareGif -> {
+                context.startActivity(
+                    Intent.createChooser(
+                        currentEvent.shareIntent,
+                        "Share GIF via"
+                    )
+                )
+            }
+        }
+    }
+
     Column(Modifier.fillMaxSize()) {
+
         GifViewer(
             gifItem?.images?.original, modifier = Modifier
                 .padding(AppTheme.sizes.medium)
@@ -67,11 +85,19 @@ fun GiphyDetailsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            CustomButton(buttonName = "Favorite", icon = R.drawable.ic_favorite, "") {
+            CustomButton(
+                buttonName = if (uiState.isFavorite) "Remove" else "Favorite",
+                icon = R.drawable.ic_favorite,
+                ""
+            ) {
                 listener.onClickFavorite()
             }
 
-            CustomButton(buttonName = "Share", icon = R.drawable.ic_share, ""){}
+            CustomButton(
+                buttonName = "Share",
+                icon = R.drawable.ic_share,
+                ""
+            ) { viewModel.onClickShare() }
 
             OutlinedButton(
                 onClick = { clipboardManager.copy(gifItem?.url) },

@@ -1,15 +1,13 @@
 package com.example.gifbrowserapp.presentation.features.giphyDetails
 
-import android.util.Log
+import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.example.gifbrowserapp.data.entities.local.GifItem
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
-import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifState
 import com.example.gifbrowserapp.presentation.utils.extensions.toFavoriteGif
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,32 +19,51 @@ class GiphyDetailsViewModel @Inject constructor(
     GiphyDetailsInteractionListener {
 
     private val _uiState = MutableStateFlow(GiphyDetailsUiState())
-    val uiState: StateFlow<GiphyDetailsUiState> get() = _uiState
-
-    private val _favoriteGifState = MutableStateFlow(FavoriteGifState())
-    val favoriteGifState = _favoriteGifState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val _gifItem = MutableStateFlow<GifItem?>(null)
     val gifItem = _gifItem.asStateFlow()
 
     fun setGifItem(gifItem: GifItem) {
         _gifItem.value = gifItem
+        checkIfFavorite(gifItem)
     }
 
-    override fun navigateToHome() {
-        TODO("Not yet implemented")
+    private fun createShareIntent(gifUrl: String): Intent {
+        return Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "Check out this awesome GIF! $gifUrl")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
     }
 
-    override fun onClickShare() {
-        TODO("Not yet implemented")
+    private fun checkIfFavorite(gifItem: GifItem) {
+        viewModelScope.launch {
+            localGifsRepository.getFavoriteGifs().collect { favoriteGifList ->
+                val isFavorite = favoriteGifList.any { it.id == gifItem.id }
+                _uiState.value = _uiState.value.copy(isFavorite = isFavorite)
+            }
+        }
     }
 
     override fun onClickFavorite() {
-        Log.d("INDETAILSScreen", "onClickFavorite:${_gifItem.value}")
-        _gifItem.value?.let {
+        _gifItem.value?.let { gifItem ->
             viewModelScope.launch {
-                localGifsRepository.addFavoriteGif(it.toFavoriteGif())
+                if (_uiState.value.isFavorite) {
+                    localGifsRepository.removeFavoriteGif(gifItem.toFavoriteGif())
+                    _uiState.value = _uiState.value.copy(isFavorite = false)
+                } else {
+                    localGifsRepository.addFavoriteGif(gifItem.toFavoriteGif())
+                    _uiState.value = _uiState.value.copy(isFavorite = true)
+                }
             }
+        }
+    }
+
+    override fun onClickShare() {
+        _gifItem.value?.let { gifItem ->
+            val shareIntent = createShareIntent(gifItem.images.original)
+            emitNewEvent(GiphyDetailsEvent.ShareGif(shareIntent))
         }
     }
 }

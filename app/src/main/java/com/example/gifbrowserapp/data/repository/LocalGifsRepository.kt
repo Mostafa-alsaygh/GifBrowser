@@ -4,7 +4,7 @@ import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import kotlinx.coroutines.flow.Flow
 
 interface LocalGifsRepository {
-    suspend fun getFavoriteById(id: Int): FavoriteGif
+    suspend fun getFavoriteById(id: String): FavoriteGif
 
     suspend fun getFavoriteGifs(): Flow<List<FavoriteGif>>
 

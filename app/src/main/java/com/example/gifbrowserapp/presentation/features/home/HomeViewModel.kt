@@ -1,7 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.CachePolicy
@@ -21,7 +20,6 @@ import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,10 +39,6 @@ class HomeViewModel @Inject constructor(
 
     private val _favoriteGifState = MutableStateFlow(FavoriteGifState())
     val favoriteGifState = _favoriteGifState.asStateFlow()
-
-    private val _networkStatus = MutableStateFlow(true) // Default to connected
-    val networkStatus: StateFlow<Boolean> = _networkStatus
-
 
     init {
         fetchTrendingAndCategoriesGiphy()
@@ -78,6 +72,7 @@ class HomeViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
+                monitorNetworkStatus()
             }
         }
     }
@@ -114,28 +109,12 @@ class HomeViewModel @Inject constructor(
                             isLoading = false
                         )
                     }
-                    Log.d("INHOMEScreen", "onLOADFAVORITES: ${favoriteGifState.value.favoriteGifs}")
                 }
             } catch (e: Exception) {
                 _favoriteGifState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
     }
-
-
-    fun preloadGifs(gifUrls: List<String?>, context: Context) {
-        val imageLoader = ImageLoader(context)
-        gifUrls.forEach { url ->
-            val request = ImageRequest.Builder(context)
-                .data(url)
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .build()
-
-            imageLoader.enqueue(request)
-        }
-    }
-
 
     private fun addFavoriteGif(gif: FavoriteGif) {
         viewModelScope.launch {
@@ -159,6 +138,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun preloadGifs(gifUrls: List<String?>, context: Context) {
+        val imageLoader = ImageLoader(context)
+        gifUrls.forEach { url ->
+            val request = ImageRequest.Builder(context)
+                .data(url)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .build()
+
+            imageLoader.enqueue(request)
+        }
+    }
+
     private fun monitorNetworkStatus() {
         viewModelScope.launch {
             networkMonitor.isConnected.collect { isConnected ->
@@ -176,9 +168,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun retryFetchingData() {
-        fetchTrendingAndCategoriesGiphy()
-    }
+    private fun retryFetchingData() = fetchTrendingAndCategoriesGiphy()
 
     override fun onCleared() {
         super.onCleared()

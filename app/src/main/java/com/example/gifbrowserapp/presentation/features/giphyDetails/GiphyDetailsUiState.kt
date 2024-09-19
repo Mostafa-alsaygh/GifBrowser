@@ -4,5 +4,6 @@ import com.example.gifbrowserapp.data.entities.remote.Original
 
 data class GiphyDetailsUiState(
     val gifData: Original = Original(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isFavorite: Boolean = false,
 )
