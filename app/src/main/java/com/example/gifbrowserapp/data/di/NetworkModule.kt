@@ -1,6 +1,7 @@
 package com.example.gifbrowserapp.data.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.example.gifbrowserapp.data.utils.NetworkMonitor
 import dagger.Module
 import dagger.Provides
@@ -15,7 +16,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkMonitor(@ApplicationContext context: Context): NetworkMonitor {
-        return NetworkMonitor(context)
+    fun provideConnectivityManager(@ApplicationContext context:Context): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkMonitor(connectivityManager: ConnectivityManager): NetworkMonitor {
+        return NetworkMonitor(connectivityManager)
     }
 }
