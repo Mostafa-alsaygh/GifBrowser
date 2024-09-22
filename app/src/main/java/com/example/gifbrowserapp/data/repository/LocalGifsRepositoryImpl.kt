@@ -1,6 +1,5 @@
 package com.example.gifbrowserapp.data.repository
 
-import android.util.Log
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.local.FavoriteGifDao
 import kotlinx.coroutines.flow.Flow

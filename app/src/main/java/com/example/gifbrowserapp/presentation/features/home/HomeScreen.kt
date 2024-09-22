@@ -24,6 +24,7 @@ import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
+import com.example.gifbrowserapp.presentation.design.Spacer
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToSearch
@@ -85,6 +86,8 @@ fun HomeScreen(
             onSearch = {},
             modifier = Modifier.clickableNoRipple(onClick = listener::navigateToSearch)
         ) {}
+
+        Spacer.Small()
 
         PrimaryTabRow(
             selectedTabIndex = tabRowState,
