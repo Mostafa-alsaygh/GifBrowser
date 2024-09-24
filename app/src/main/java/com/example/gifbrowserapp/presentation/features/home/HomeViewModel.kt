@@ -16,7 +16,10 @@ import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarEvent
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifState
+import com.example.gifbrowserapp.presentation.features.localGiphy.TrendingGifEvent
 import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
+import com.example.gifbrowserapp.presentation.utils.extensions.toLocalTrendingGifsList
+import com.example.gifbrowserapp.presentation.utils.extensions.toTrendingGifsFromLocal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,55 +49,76 @@ class HomeViewModel @Inject constructor(
         monitorNetworkStatus()
     }
 
-    fun onEvent(event: FavoriteGifEvent) {
-        when (event) {
+    fun onEvent(favoriteGifEvent: FavoriteGifEvent, trendingGifEvent: TrendingGifEvent) {
+        when (favoriteGifEvent) {
             FavoriteGifEvent.LoadFavorites -> loadFavorites()
-            is FavoriteGifEvent.AddFavorite -> addFavoriteGif(event.gif)
-            is FavoriteGifEvent.RemoveFavorite -> removeFavoriteGif(event.gif)
+            is FavoriteGifEvent.AddFavorite -> addFavoriteGif(favoriteGifEvent.gif)
+            is FavoriteGifEvent.RemoveFavorite -> removeFavoriteGif(favoriteGifEvent.gif)
+        }
+
+        when (trendingGifEvent) {
+            TrendingGifEvent.LoadTrending -> fetchTrendingAndCategoriesGiphy()
+            is TrendingGifEvent.AddLastTrendingGifs -> addLastTrendingGifs(trendingGifEvent.trendingGifs)
         }
     }
+
 
     private fun fetchTrendingAndCategoriesGiphy() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            try {
-                val gifs = giphyRepository.takeTrendingGifs()
-                val categories = giphyRepository.takeCategoriesOfGiphy()
-                val gifUrls =
-                    gifs.data.map { it.images?.fixedWidthDownsampled?.url } // Extract URLs to preload
-                //todo preload gifs, Coil catching {preloadGifs}
-                preloadGifs(gifUrls, context = context)
-                _uiState.value = HomeUiState(
-                    gifsData = gifs.data.toTrendingGifList(),
-                    categories = categories.data,
-                    isLoading = false
-                )
 
-            } catch (e: Exception) {
-                _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
-                monitorNetworkStatus()
+            if (networkMonitor.isConnected.value) {
+                fetchTrendingAndSaveLocally()
+            } else {
+                loadTrendingGifsFromCache()
             }
         }
     }
 
-    override fun navigateToSearch() {
-        emitNewEvent(HomeEvent.NavigateToSearchScreen)
+    private suspend fun fetchTrendingAndSaveLocally() {
+        try {
+            val gifs = giphyRepository.takeTrendingGifs()
+            val categories = giphyRepository.takeCategoriesOfGiphy()
+
+            val gifUrls = gifs.data.map { it.images?.fixedWidthDownsampled?.url }
+            preloadGifs(gifUrls, context)
+
+            localGifsRepository.addTrendingGifs(gifs.data.toLocalTrendingGifsList())
+
+            _uiState.value = HomeUiState(
+                gifsData = gifs.data.toTrendingGifList(),
+                categories = categories.data,
+                isLoading = false
+            )
+        } catch (e: Exception) {
+            _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
+            monitorNetworkStatus()
+        }
     }
 
-    override fun onClickGif(trendingGif: TrendingGif) {
-        val gifItem = trendingGif.toGifItem()
-        _uiState.value = _uiState.value.copy(selectedGif = gifItem)
-        emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
+
+    private suspend fun loadTrendingGifsFromCache() {
+        try {
+            localGifsRepository.getTrendingGifs().collect { cachedTrendingGifs ->
+                _uiState.value = HomeUiState(
+                    gifsData = cachedTrendingGifs.toTrendingGifsFromLocal(),
+                    isLoading = false,
+                    errorMessage = if (cachedTrendingGifs.isEmpty()) "No cached trending GIFs" else null
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
+        }
     }
 
-    override fun onClickFavoriteGif(favoriteGif: FavoriteGif) {
-        _uiState.value = _uiState.value.copy(selectedGif = favoriteGif.toGifItem())
-        emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
-    }
-
-    override fun onClickCategory(categoryName: String) {
-        _uiState.value.categoryName = categoryName
-        emitNewEvent(HomeEvent.NavigateToSearchScreenWithCategoryName)
+    private fun addLastTrendingGifs(trendingGifs: List<com.example.gifbrowserapp.data.entities.local.LocalTrendingGif>) {
+        viewModelScope.launch {
+            try {
+                localGifsRepository.addTrendingGifs(trendingGifs)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+            }
+        }
     }
 
 
@@ -138,6 +162,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
     private fun preloadGifs(gifUrls: List<String?>, context: Context) {
         val imageLoader = ImageLoader(context)
         gifUrls.forEach { url ->
@@ -169,6 +194,26 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun retryFetchingData() = fetchTrendingAndCategoriesGiphy()
+
+    override fun navigateToSearch() {
+        emitNewEvent(HomeEvent.NavigateToSearchScreen)
+    }
+
+    override fun onClickGif(trendingGif: TrendingGif) {
+        val gifItem = trendingGif.toGifItem()
+        _uiState.value = _uiState.value.copy(selectedGif = gifItem)
+        emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
+    }
+
+    override fun onClickFavoriteGif(favoriteGif: FavoriteGif) {
+        _uiState.value = _uiState.value.copy(selectedGif = favoriteGif.toGifItem())
+        emitNewEvent(HomeEvent.NavigateToGiphyDetailsScreen)
+    }
+
+    override fun onClickCategory(categoryName: String) {
+        _uiState.value.categoryName = categoryName
+        emitNewEvent(HomeEvent.NavigateToSearchScreenWithCategoryName)
+    }
 
     override fun onCleared() {
         super.onCleared()

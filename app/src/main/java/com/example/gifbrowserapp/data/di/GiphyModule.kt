@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.gifbrowserapp.data.local.FavoriteGifDao
 import com.example.gifbrowserapp.data.local.LocalGifDatabase
+import com.example.gifbrowserapp.data.local.TrendingGifDao
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.repository.GiphyRepository
 import com.example.gifbrowserapp.data.repository.GiphyRepositoryImpl
@@ -40,11 +41,11 @@ object GiphyModule {
 
     @Provides
     @Singleton
-    fun providesFavoriteGifDatabase(
+    fun providesLocalGifDatabase(
         @ApplicationContext
         context: Context
     ): LocalGifDatabase =
-        Room.databaseBuilder(context, LocalGifDatabase::class.java, "FavoriteGifDb")
+        Room.databaseBuilder(context, LocalGifDatabase::class.java, "LocalGifDb")
             .build()
 
     @Provides
@@ -55,8 +56,15 @@ object GiphyModule {
 
     @Provides
     @Singleton
+    fun providesTrendingGifDao(
+        trendingGifDatabase: LocalGifDatabase
+    ): TrendingGifDao = trendingGifDatabase.trendingGifDao
+
+    @Provides
+    @Singleton
     fun providesLocalGifsRepository(
-        favoriteGifDao: FavoriteGifDao
-    ): LocalGifsRepository = LocalGifsRepositoryImpl(favoriteGifDao = favoriteGifDao)
+        favoriteGifDao: FavoriteGifDao, trendingGifDao: TrendingGifDao
+    ): LocalGifsRepository =
+        LocalGifsRepositoryImpl(favoriteGifDao = favoriteGifDao, trendingGifDao = trendingGifDao)
 
 }

@@ -6,6 +6,9 @@ import androidx.compose.ui.graphics.Color
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.entities.local.GifImage
 import com.example.gifbrowserapp.data.entities.local.GifItem
+import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
+import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
+import com.example.gifbrowserapp.presentation.features.home.GifImages
 import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 import com.example.gifbrowserapp.presentation.features.search.SearchedGif
 
@@ -51,6 +54,31 @@ fun GifItem.toFavoriteGif(): FavoriteGif {
         originalGifUrl = this.images.original,
         webGifUrl = this.url,
         date = System.currentTimeMillis()
+    )
+}
+
+fun List<GifData>.toLocalTrendingGifsList(): List<LocalTrendingGif> {
+    return this.map { it.toLocalTrendingGif() }
+}
+
+fun GifData.toLocalTrendingGif(): LocalTrendingGif {
+    return LocalTrendingGif(
+        id = this.id,
+        originalGifUrl = this.images?.original?.url ?: "",
+        sampledGif = this.images?.fixedWidthDownsampled?.url ?: "",
+        webGifUrl = this.url ?: "",
+    )
+}
+
+fun List<LocalTrendingGif>.toTrendingGifsFromLocal(): List<TrendingGif> {
+    return this.map { it.toTrendingGifFromLocal() }
+}
+
+fun LocalTrendingGif.toTrendingGifFromLocal(): TrendingGif {
+    return TrendingGif(
+        id = this.id,
+        url = this.webGifUrl,
+        images = GifImages(original = this.originalGifUrl, fixedWidthDownsampled = this.sampledGif)
     )
 }
 

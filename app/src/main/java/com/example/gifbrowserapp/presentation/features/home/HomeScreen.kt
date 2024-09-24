@@ -26,6 +26,7 @@ import com.example.gifbrowserapp.presentation.components.SearchField
 import com.example.gifbrowserapp.presentation.design.AppTheme
 import com.example.gifbrowserapp.presentation.design.Spacer
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
+import com.example.gifbrowserapp.presentation.features.localGiphy.TrendingGifEvent
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToSearch
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
@@ -65,7 +66,10 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(FavoriteGifEvent.LoadFavorites)
+        viewModel.onEvent(
+            FavoriteGifEvent.LoadFavorites,
+            TrendingGifEvent.LoadTrending
+        )
     }
 
     Column(
