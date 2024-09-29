@@ -15,7 +15,7 @@ class LocalGifsRepositoryImpl @Inject constructor(
     override suspend fun getFavoriteById(id: String): FavoriteGif =
         favoriteGifDao.getFavoriteGifById(id)
 
-    override suspend fun getFavoriteGifs(): Flow<List<FavoriteGif>> {
+    override fun getFavoriteGifs(): Flow<List<FavoriteGif>> {
         return favoriteGifDao.getFavoriteGifOrderedByDate()
     }
 

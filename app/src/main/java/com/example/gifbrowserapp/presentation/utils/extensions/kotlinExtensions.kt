@@ -15,6 +15,11 @@ import com.example.gifbrowserapp.presentation.features.search.SearchedGif
 
 fun @receiver:ColorInt Int?.toColor() = this?.run { Color(this) }
 
+
+fun emptyGifItem(): GifItem {
+    return GifItem(id = "", url = "", images = GifImage("", ""))
+}
+
 fun TrendingGif.toGifItem(): GifItem {
     return GifItem(
         id = this.id,

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -39,10 +40,16 @@ fun GiphyDetailsScreen(
 ) {
     val clipboardManager = LocalClipboardManager.current
     val listener: GiphyDetailsInteractionListener = viewModel
-    val gifItem by viewModel.gifItem.collectAsState()
     val uiState: GiphyDetailsUiState by viewModel.uiState.collectAsState()
     val uiEvent: GiphyDetailsEvent? by viewModel.event.collectAsState(null)
     val context = LocalContext.current
+
+
+    val isFavorite = produceState(initialValue = false, key1 = uiState.gifItem.id) {
+        viewModel.isGifFavoriteFlow(uiState.gifItem).collect { favorite ->
+            value = favorite
+        }
+    }
 
     LaunchedEffect(gifItemSent) {
         gifItemSent?.let {
@@ -66,7 +73,7 @@ fun GiphyDetailsScreen(
     Column(Modifier.fillMaxSize()) {
 
         GifViewer(
-            gifItem?.images?.original, modifier = Modifier
+            uiState.gifItem.images.original, modifier = Modifier
                 .padding(AppTheme.sizes.medium)
                 .fillMaxHeight(0.7f)
                 .fillMaxWidth()
@@ -86,7 +93,7 @@ fun GiphyDetailsScreen(
         ) {
 
             CustomButton(
-                buttonName = if (uiState.isFavorite) "Remove" else "Favorite",
+                buttonName = if (isFavorite.value) "Remove" else "Favorite",
                 icon = R.drawable.ic_favorite,
                 ""
             ) {
@@ -100,7 +107,7 @@ fun GiphyDetailsScreen(
             ) { viewModel.onClickShare() }
 
             OutlinedButton(
-                onClick = { clipboardManager.copy(gifItem?.url) },
+                onClick = { clipboardManager.copy(uiState.gifItem.url) },
                 content = { Text(text = "Copy Link") },
                 border = BorderStroke(
                     width = 1.dp,
