@@ -1,6 +1,7 @@
 package com.example.gifbrowserapp.presentation.design
 
 import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,8 +42,7 @@ object AppTheme {
 
     @Composable
     operator fun invoke(
-//        useDarkTheme: Boolean = isSystemInDarkTheme(),
-        useDarkTheme: Boolean = false,
+        useDarkTheme: Boolean = isSystemInDarkTheme(),
         content: @Composable AppTheme.() -> Unit
     ) {
         val colors = if (!useDarkTheme)

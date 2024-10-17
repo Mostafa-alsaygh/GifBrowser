@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -77,7 +78,11 @@ fun SearchField(
         tonalElevation = 1.dp,
         colors = SearchBarDefaults.colors(
             dividerColor = AppTheme.colors.divider,
-            containerColor = AppTheme.colors.onPrimary,
+            containerColor = AppTheme.colors.surface,
+            inputFieldColors = TextFieldDefaults.colors(
+                focusedTextColor = AppTheme.colors.contentPrimary,
+                unfocusedTextColor = AppTheme.colors.contentPrimary
+            )
         ),
         content = content
     )

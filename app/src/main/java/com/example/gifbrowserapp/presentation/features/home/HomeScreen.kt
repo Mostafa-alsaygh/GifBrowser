@@ -79,7 +79,7 @@ fun HomeScreen(
     ) {
 
         SearchField(
-            query = "",
+            query = emptyString(),
             active = false,
             enabled = false,
             placeholder = "Search For Gifs",
