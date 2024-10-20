@@ -7,9 +7,9 @@ import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.utils.ApiUtils
 import javax.inject.Inject
 
-class GiphyRepositoryImpl @Inject constructor(
+class NetworkGiphyRepositoryImpl @Inject constructor(
     private val giphyApi: GiphyApiService,
-) : GiphyRepository {
+) : NetworkGiphyRepository {
 
 
     override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> {

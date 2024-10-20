@@ -16,6 +16,6 @@ fun CategoryItem(nameOfCategory: String, getCategoryName: (String) -> Unit) {
         colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.primary)
     )
     {
-        Text(nameOfCategory)
+        Text(nameOfCategory, style = AppTheme.typography.titleMedium)
     }
 }

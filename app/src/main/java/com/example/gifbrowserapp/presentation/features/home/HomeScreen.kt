@@ -96,7 +96,7 @@ fun HomeScreen(
         PrimaryTabRow(
             selectedTabIndex = tabRowState,
             containerColor = AppTheme.colors.surface,
-            contentColor = AppTheme.colors.primary
+            contentColor = AppTheme.colors.primary,
         ) {
             titles.forEachIndexed { index, title ->
                 Tab(
@@ -106,7 +106,8 @@ fun HomeScreen(
                         Text(
                             text = title,
                             maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            style = AppTheme.typography.titleLarge
                         )
                     }
                 )

@@ -1,13 +1,14 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
-import com.example.gifbrowserapp.data.repository.GiphyRepository
+import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
 import com.example.gifbrowserapp.data.utils.NetworkMonitor
 import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarAction
@@ -31,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val giphyRepository: GiphyRepository,
+    private val networkGiphyRepository: NetworkGiphyRepository,
     private val localGifsRepository: LocalGifsRepository,
     private val networkMonitor: NetworkMonitor
 ) : BaseViewModel<HomeUiState, HomeEvent>(HomeUiState()),
@@ -52,13 +53,11 @@ class HomeViewModel @Inject constructor(
     fun onEvent(favoriteGifEvent: FavoriteGifEvent, trendingGifEvent: TrendingGifEvent) {
         when (favoriteGifEvent) {
             FavoriteGifEvent.LoadFavorites -> loadFavorites()
-            is FavoriteGifEvent.AddFavorite -> addFavoriteGif(favoriteGifEvent.gif)
-            is FavoriteGifEvent.RemoveFavorite -> removeFavoriteGif(favoriteGifEvent.gif)
         }
 
         when (trendingGifEvent) {
             TrendingGifEvent.LoadTrending -> fetchTrendingAndCategoriesGiphy()
-            is TrendingGifEvent.AddLastTrendingGifs -> addLastTrendingGifs(trendingGifEvent.trendingGifs)
+            is TrendingGifEvent.AddLastTrendingGifs -> addLastLocalTrendingGifs(trendingGifEvent.trendingGifs)
         }
     }
 
@@ -66,19 +65,23 @@ class HomeViewModel @Inject constructor(
     private fun fetchTrendingAndCategoriesGiphy() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-
+            Log.d("LOADING", "Network is connected1: ${networkMonitor.isConnected.value}")
             if (networkMonitor.isConnected.value) {
-                fetchTrendingAndSaveLocally()
+                Log.d("LOADING", "Network is connected2: ${networkMonitor.isConnected.value}")
+                fetchTrendingAndCategoriesAndSaveLocally()
             } else {
+
+                Log.d("LOADING", "Network is connected{BeforecallingLoadTrendingGifsFromCache}: ${networkMonitor.isConnected.value}")
                 loadTrendingGifsFromCache()
             }
         }
     }
 
-    private suspend fun fetchTrendingAndSaveLocally() {
+    private suspend fun fetchTrendingAndCategoriesAndSaveLocally() {
         try {
-            val gifs = giphyRepository.takeTrendingGifs()
-            val categories = giphyRepository.takeCategoriesOfGiphy()
+            Log.d("LOADING", "!! the fetchTrending Called and Network is connected: ${networkMonitor.isConnected.value}")
+            val gifs = networkGiphyRepository.takeTrendingGifs()
+            val categories = networkGiphyRepository.takeCategoriesOfGiphy()
 
             val gifUrls = gifs.data.map { it.images?.fixedWidthDownsampled?.url }
             preloadGifs(gifUrls, context)
@@ -90,6 +93,8 @@ class HomeViewModel @Inject constructor(
                 categories = categories.data,
                 isLoading = false
             )
+            Log.d("LOADING", "loaded..TrendingAndCategories$categories")
+
         } catch (e: Exception) {
             _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
             monitorNetworkStatus()
@@ -99,19 +104,21 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun loadTrendingGifsFromCache() {
         try {
+            Log.d("LOADING", "Network is connected {loadTrendingGifsFromCache}: ${networkMonitor.isConnected.value}")
             localGifsRepository.getTrendingGifs().collect { cachedTrendingGifs ->
                 _uiState.value = HomeUiState(
                     gifsData = cachedTrendingGifs.toTrendingGifsFromLocal(),
                     isLoading = false,
                     errorMessage = if (cachedTrendingGifs.isEmpty()) "No cached trending GIFs" else null
                 )
+                monitorNetworkStatus()
             }
         } catch (e: Exception) {
             _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
         }
     }
 
-    private fun addLastTrendingGifs(trendingGifs: List<com.example.gifbrowserapp.data.entities.local.LocalTrendingGif>) {
+    private fun addLastLocalTrendingGifs(trendingGifs: List<com.example.gifbrowserapp.data.entities.local.LocalTrendingGif>) {
         viewModelScope.launch {
             try {
                 localGifsRepository.addTrendingGifs(trendingGifs)
@@ -140,28 +147,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun addFavoriteGif(gif: FavoriteGif) {
-        viewModelScope.launch {
-            try {
-                localGifsRepository.addFavoriteGif(favoriteGif = gif)
-                loadFavorites()
-            } catch (e: Exception) {
-                _favoriteGifState.update { it.copy(error = e.message) }
-            }
-        }
-    }
-
-    private fun removeFavoriteGif(gif: FavoriteGif) {
-        viewModelScope.launch {
-            try {
-                localGifsRepository.removeFavoriteGif(gif)
-                loadFavorites()
-            } catch (e: Exception) {
-                _favoriteGifState.update { it.copy(error = e.message) }
-            }
-        }
-    }
-
 
     private fun preloadGifs(gifUrls: List<String?>, context: Context) {
         val imageLoader = ImageLoader(context)
@@ -184,7 +169,7 @@ class HomeViewModel @Inject constructor(
                         event = SnackbarEvent(
                             message = "No internet connection",
                             action = SnackbarAction("Retry") {
-                                retryFetchingData()
+                                fetchTrendingAndCategoriesGiphy()
                             }
                         )
                     )
@@ -193,7 +178,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun retryFetchingData() = fetchTrendingAndCategoriesGiphy()
 
     override fun navigateToSearch() {
         emitNewEvent(HomeEvent.NavigateToSearchScreen)

@@ -1,6 +1,7 @@
 package com.example.gifbrowserapp.presentation.utils.extensions
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
@@ -30,6 +31,14 @@ fun imageRequester(): ImageRequest.Builder {
     return ImageRequest.Builder(LocalContext.current)
         .memoryCachePolicy(CachePolicy.ENABLED)
         .diskCachePolicy(CachePolicy.ENABLED).crossfade(true)
+        .listener(
+            onSuccess = { _, result ->
+                Log.d("COIL", "GIF loaded from ${result.dataSource}")
+            },
+            onError = { _, throwable ->
+                Log.e("COIL", "Error loading GIF: ${throwable.request.error}")
+            }
+        )
         .apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 decoderFactory(ImageDecoderDecoder.Factory())

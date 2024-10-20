@@ -3,7 +3,7 @@ package com.example.gifbrowserapp.presentation.features.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.gifbrowserapp.data.remote.mappers.toSearchedGifList
-import com.example.gifbrowserapp.data.repository.GiphyRepository
+import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
 import com.example.gifbrowserapp.presentation.utils.extensions.emptyString
 import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val giphyRepository: GiphyRepository,
+    private val giphyRepository: NetworkGiphyRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<SearchUiState, SearchEvent>(SearchUiState()), SearchInteractionListener {
 

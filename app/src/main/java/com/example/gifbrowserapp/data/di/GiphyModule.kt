@@ -6,8 +6,8 @@ import com.example.gifbrowserapp.data.local.FavoriteGifDao
 import com.example.gifbrowserapp.data.local.LocalGifDatabase
 import com.example.gifbrowserapp.data.local.TrendingGifDao
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
-import com.example.gifbrowserapp.data.repository.GiphyRepository
-import com.example.gifbrowserapp.data.repository.GiphyRepositoryImpl
+import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
+import com.example.gifbrowserapp.data.repository.NetworkGiphyRepositoryImpl
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
 import com.example.gifbrowserapp.data.repository.LocalGifsRepositoryImpl
 import dagger.Module
@@ -35,8 +35,8 @@ object GiphyModule {
 
     @Provides
     @Singleton
-    fun providesGiphyRepository(giphyApi: GiphyApiService): GiphyRepository {
-        return GiphyRepositoryImpl(giphyApi = giphyApi)
+    fun providesNetworkGiphyRepository(giphyApi: GiphyApiService): NetworkGiphyRepository {
+        return NetworkGiphyRepositoryImpl(giphyApi = giphyApi)
     }
 
     @Provides

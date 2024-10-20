@@ -4,7 +4,7 @@ import com.example.gifbrowserapp.data.entities.remote.ApiResponseRemote
 import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
 import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 
-interface GiphyRepository {
+interface NetworkGiphyRepository {
     suspend fun takeTrendingGifs(): ApiResponseRemote<GifData>
 
     suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData>
