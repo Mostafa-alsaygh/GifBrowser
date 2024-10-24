@@ -25,12 +25,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.giphy.com/\"")
+            buildConfigField("String", "API_KEY", "\"IAE3fY0ekIEgxc6Wnzfi9NTrwIYBtE7t\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "BASE_URL", "\"https://api.giphy.com/\"")
+            buildConfigField("String", "API_KEY", "\"IAE3fY0ekIEgxc6Wnzfi9NTrwIYBtE7t\"")
         }
     }
     compileOptions {
@@ -41,6 +47,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig =true
         compose = true
     }
 

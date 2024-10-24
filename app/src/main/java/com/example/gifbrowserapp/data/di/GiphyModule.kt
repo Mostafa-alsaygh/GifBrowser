@@ -2,6 +2,7 @@ package com.example.gifbrowserapp.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.gifbrowserapp.BuildConfig
 import com.example.gifbrowserapp.data.local.FavoriteGifDao
 import com.example.gifbrowserapp.data.local.LocalGifDatabase
 import com.example.gifbrowserapp.data.local.TrendingGifDao
@@ -26,7 +27,7 @@ object GiphyModule {
     @Singleton
     fun provideGiphyApi(): GiphyApiService {
         return Retrofit.Builder()
-            .baseUrl("https://api.giphy.com/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(GiphyApiService::class.java)
