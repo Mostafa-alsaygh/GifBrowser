@@ -72,15 +72,13 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.implementation.compose)
     implementation(libs.bundles.implementation.utils)
+
     ksp(libs.bundles.ksp)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.testImplementation)
 
     androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-
+    androidTestImplementation(libs.bundles.androidTestImplementation)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

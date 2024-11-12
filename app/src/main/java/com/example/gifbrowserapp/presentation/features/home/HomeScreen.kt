@@ -67,8 +67,8 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(
-            FavoriteGifEvent.LoadFavorites,
-            TrendingGifEvent.LoadTrending
+            TrendingGifEvent.LoadTrending,
+            FavoriteGifEvent.LoadFavorites
         )
     }
 

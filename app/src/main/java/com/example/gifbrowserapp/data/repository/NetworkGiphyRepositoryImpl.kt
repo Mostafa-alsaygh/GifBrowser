@@ -13,7 +13,6 @@ class NetworkGiphyRepositoryImpl @Inject constructor(
 
 
     override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> {
-
         return giphyApi.getTrendingGifs(
             apiKey = BuildConfig.API_KEY,
             limit = 50,

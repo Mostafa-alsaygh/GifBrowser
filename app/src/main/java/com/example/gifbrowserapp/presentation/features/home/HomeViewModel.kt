@@ -1,7 +1,6 @@
 package com.example.gifbrowserapp.presentation.features.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.CachePolicy
@@ -45,19 +44,15 @@ class HomeViewModel @Inject constructor(
     val favoriteGifState = _favoriteGifState.asStateFlow()
 
     init {
-        fetchTrendingAndCategoriesGiphy()
-        loadFavorites()
         monitorNetworkStatus()
     }
 
-    fun onEvent(favoriteGifEvent: FavoriteGifEvent, trendingGifEvent: TrendingGifEvent) {
-        when (favoriteGifEvent) {
-            FavoriteGifEvent.LoadFavorites -> loadFavorites()
-        }
-
+    fun onEvent(trendingGifEvent: TrendingGifEvent, favoriteGifEvent: FavoriteGifEvent) {
         when (trendingGifEvent) {
             TrendingGifEvent.LoadTrending -> fetchTrendingAndCategoriesGiphy()
-            is TrendingGifEvent.AddLastTrendingGifs -> addLastLocalTrendingGifs(trendingGifEvent.trendingGifs)
+        }
+        when (favoriteGifEvent) {
+            FavoriteGifEvent.LoadFavorites -> loadFavorites()
         }
     }
 
@@ -65,13 +60,10 @@ class HomeViewModel @Inject constructor(
     private fun fetchTrendingAndCategoriesGiphy() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            Log.d("LOADING", "Network is connected1: ${networkMonitor.isConnected.value}")
             if (networkMonitor.isConnected.value) {
-                Log.d("LOADING", "Network is connected2: ${networkMonitor.isConnected.value}")
                 fetchTrendingAndCategoriesAndSaveLocally()
             } else {
 
-                Log.d("LOADING", "Network is connected{BeforecallingLoadTrendingGifsFromCache}: ${networkMonitor.isConnected.value}")
                 loadTrendingGifsFromCache()
             }
         }
@@ -79,21 +71,19 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun fetchTrendingAndCategoriesAndSaveLocally() {
         try {
-            Log.d("LOADING", "!! the fetchTrending Called and Network is connected: ${networkMonitor.isConnected.value}")
-            val gifs = networkGiphyRepository.takeTrendingGifs()
+            val trendingGifs = networkGiphyRepository.takeTrendingGifs()
             val categories = networkGiphyRepository.takeCategoriesOfGiphy()
 
-            val gifUrls = gifs.data.map { it.images?.fixedWidthDownsampled?.url }
+            val gifUrls = trendingGifs.data.map { it.images?.fixedWidthDownsampled?.url }
             preloadGifs(gifUrls, context)
 
-            localGifsRepository.addTrendingGifs(gifs.data.toLocalTrendingGifsList())
+            localGifsRepository.addTrendingGifs(trendingGifs.data.toLocalTrendingGifsList())
 
             _uiState.value = HomeUiState(
-                gifsData = gifs.data.toTrendingGifList(),
+                gifsData = trendingGifs.data.toTrendingGifList(),
                 categories = categories.data,
                 isLoading = false
             )
-            Log.d("LOADING", "loaded..TrendingAndCategories$categories")
 
         } catch (e: Exception) {
             _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
@@ -104,7 +94,6 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun loadTrendingGifsFromCache() {
         try {
-            Log.d("LOADING", "Network is connected {loadTrendingGifsFromCache}: ${networkMonitor.isConnected.value}")
             localGifsRepository.getTrendingGifs().collect { cachedTrendingGifs ->
                 _uiState.value = HomeUiState(
                     gifsData = cachedTrendingGifs.toTrendingGifsFromLocal(),
@@ -115,16 +104,6 @@ class HomeViewModel @Inject constructor(
             }
         } catch (e: Exception) {
             _uiState.value = HomeUiState(isLoading = false, errorMessage = e.message)
-        }
-    }
-
-    private fun addLastLocalTrendingGifs(trendingGifs: List<com.example.gifbrowserapp.data.entities.local.LocalTrendingGif>) {
-        viewModelScope.launch {
-            try {
-                localGifsRepository.addTrendingGifs(trendingGifs)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(errorMessage = e.message)
-            }
         }
     }
 
