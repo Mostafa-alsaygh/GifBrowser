@@ -7,16 +7,11 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.remote.mappers.toTrendingGifList
-import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
+import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
 import com.example.gifbrowserapp.data.utils.NetworkMonitor
-import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarAction
-import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarController
-import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarEvent
 import com.example.gifbrowserapp.presentation.features.base.BaseViewModel
-import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
 import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifState
-import com.example.gifbrowserapp.presentation.features.localGiphy.TrendingGifEvent
 import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
 import com.example.gifbrowserapp.presentation.utils.extensions.toLocalTrendingGifsList
 import com.example.gifbrowserapp.presentation.utils.extensions.toTrendingGifsFromLocal
@@ -47,17 +42,7 @@ class HomeViewModel @Inject constructor(
         monitorNetworkStatus()
     }
 
-    fun onEvent(trendingGifEvent: TrendingGifEvent, favoriteGifEvent: FavoriteGifEvent) {
-        when (trendingGifEvent) {
-            TrendingGifEvent.LoadTrending -> fetchTrendingAndCategoriesGiphy()
-        }
-        when (favoriteGifEvent) {
-            FavoriteGifEvent.LoadFavorites -> loadFavorites()
-        }
-    }
-
-
-    private fun fetchTrendingAndCategoriesGiphy() {
+    override fun fetchTrendingAndCategoriesGiphy() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             if (networkMonitor.isConnected.value) {
@@ -108,7 +93,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun loadFavorites() {
+    override fun loadFavoriteGif() {
         viewModelScope.launch {
             _favoriteGifState.update { it.copy(isLoading = true) }
             try {
@@ -143,16 +128,7 @@ class HomeViewModel @Inject constructor(
     private fun monitorNetworkStatus() {
         viewModelScope.launch {
             networkMonitor.isConnected.collect { isConnected ->
-                if (!isConnected) {
-                    SnackbarController.sendEvent(
-                        event = SnackbarEvent(
-                            message = "No internet connection",
-                            action = SnackbarAction("Retry") {
-                                fetchTrendingAndCategoriesGiphy()
-                            }
-                        )
-                    )
-                }
+                _uiState.value = _uiState.value.copy(isNoInternetConnection = isConnected.not())
             }
         }
     }

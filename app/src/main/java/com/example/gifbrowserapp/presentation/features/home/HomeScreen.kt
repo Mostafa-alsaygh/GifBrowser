@@ -23,10 +23,11 @@ import com.example.gifbrowserapp.R
 import com.example.gifbrowserapp.presentation.components.CategoriesGrid
 import com.example.gifbrowserapp.presentation.components.GifsGrid
 import com.example.gifbrowserapp.presentation.components.SearchField
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarAction
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarController
+import com.example.gifbrowserapp.presentation.components.snack_bar.SnackbarEvent
 import com.example.gifbrowserapp.presentation.design.AppTheme
 import com.example.gifbrowserapp.presentation.design.Spacer
-import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
-import com.example.gifbrowserapp.presentation.features.localGiphy.TrendingGifEvent
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToGiphyDetailsScreen
 import com.example.gifbrowserapp.presentation.navigation.destinations.navigateToSearch
 import com.example.gifbrowserapp.presentation.utils.extensions.Listen
@@ -49,6 +50,17 @@ fun HomeScreen(
     var tabRowState by remember { mutableIntStateOf(0) }
     val titles = listOf("Trends", "Categories", "Favorites")
 
+    uiState.Listen(filter = { isNoInternetConnection }) {
+        SnackbarController.sendEvent(
+            event = SnackbarEvent(
+                message = "No internet connection",
+                action = SnackbarAction("Retry") {
+                    viewModel.fetchTrendingAndCategoriesGiphy()
+                }
+            )
+        )
+    }
+
     uiEvent?.Listen { currentEvent ->
         when (currentEvent) {
             HomeEvent.NavigateToGiphyDetailsScreen -> {
@@ -62,14 +74,13 @@ fun HomeScreen(
             )
 
             HomeEvent.NavigateToSearchScreen -> navController.navigateToSearch(emptyString())
+
         }
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(
-            TrendingGifEvent.LoadTrending,
-            FavoriteGifEvent.LoadFavorites
-        )
+        viewModel.fetchTrendingAndCategoriesGiphy()
+        viewModel.loadFavoriteGif()
     }
 
     Column(

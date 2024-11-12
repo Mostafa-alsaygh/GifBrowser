@@ -11,8 +11,8 @@ data class HomeUiState(
     var categoryName: String = emptyString(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isNetworkError: Boolean = false
-
+    val isNetworkError: Boolean = false,
+    val isNoInternetConnection: Boolean = false
 )
 
 

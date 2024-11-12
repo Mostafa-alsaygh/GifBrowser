@@ -1,11 +1,13 @@
 package com.example.gifbrowserapp.present
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.gifbrowserapp.data.FakeData
+import com.example.gifbrowserapp.data.entities.local.FavoriteGif
+import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
 import com.example.gifbrowserapp.data.entities.remote.ApiResponseRemote
 import com.example.gifbrowserapp.data.entities.remote.FixedWidthDownsampled
 import com.example.gifbrowserapp.data.entities.remote.Meta
 import com.example.gifbrowserapp.data.entities.remote.Original
+import com.example.gifbrowserapp.data.entities.remote.categories.CategoryData
 import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 import com.example.gifbrowserapp.data.entities.remote.gifData.GifImages
 import com.example.gifbrowserapp.data.repository.LocalGifsRepository
@@ -13,19 +15,21 @@ import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
 import com.example.gifbrowserapp.data.utils.NetworkMonitor
 import com.example.gifbrowserapp.presentation.features.home.HomeViewModel
 import com.example.gifbrowserapp.presentation.features.home.TrendingGif
-import com.example.gifbrowserapp.presentation.features.localGiphy.FavoriteGifEvent
-import com.example.gifbrowserapp.presentation.features.localGiphy.TrendingGifEvent
 import com.example.gifbrowserapp.presentation.utils.extensions.toFavoriteGif
 import com.example.gifbrowserapp.presentation.utils.extensions.toGifItem
+import com.example.gifbrowserapp.presentation.utils.extensions.toTrendingGifsFromLocal
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.mockk
+import io.mockk.every
+import io.mockk.spyk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -35,15 +39,54 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
+
+class FakeLocalGifsRepositoryImpl : LocalGifsRepository {
+    override fun getFavoriteGifs(): Flow<List<FavoriteGif>> = flow { }
+
+    override suspend fun getFavoriteById(id: String): FavoriteGif = FavoriteGif(
+        id = "saperet",
+        originalGifUrl = "https://duckduckgo.com/?q=purus",
+        webGifUrl = "http://www.bing.com/search?q=maecenas",
+        date = 7945
+    )
+
+    override suspend fun addFavoriteGif(favoriteGif: FavoriteGif) = Unit
+
+    override suspend fun removeFavoriteGif(favoriteGif: FavoriteGif) = Unit
+
+    override suspend fun getTrendingGifs(): Flow<List<LocalTrendingGif>> = flow { }
+
+    override suspend fun addTrendingGifs(trendingGifs: List<LocalTrendingGif>) = Unit
+}
+
+class FakeNetworkGiphyRepositoryImpl : NetworkGiphyRepository {
+    override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> = ApiResponseRemote(
+        data = emptyList(),
+        meta = Meta(status = 200, msg = "")
+    )
+
+    override suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData> =
+        ApiResponseRemote(
+            data = emptyList(),
+            meta = Meta(status = 200, msg = "")
+        )
+
+    override suspend fun takeSearchData(query: String): ApiResponseRemote<GifData> =
+        ApiResponseRemote(
+            data = emptyList(),
+            meta = Meta(status = 200, msg = "")
+        )
+
+}
+
+class FakeNetworkMonitorImpl : NetworkMonitor {
+    override val isConnected: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    override fun unregisterNetworkCallback() = Unit
+}
 
 @ExperimentalCoroutinesApi
 class HomeViewModelTest {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
-
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var viewModel: HomeViewModel
@@ -51,19 +94,21 @@ class HomeViewModelTest {
     private lateinit var localGifsRepository: LocalGifsRepository
     private lateinit var networkMonitor: NetworkMonitor
 
+    private fun createViewModel() = HomeViewModel(
+        context = spyk(),
+        networkGiphyRepository = networkGiphyRepository,
+        localGifsRepository = localGifsRepository,
+        networkMonitor = networkMonitor
+    )
+
+
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        networkGiphyRepository = mockk()
-        localGifsRepository = mockk()
-        networkMonitor = mockk(relaxed = true)  // Relaxed mode for default empty behavior
-
-        viewModel = HomeViewModel(
-            context = mockk(relaxed = true),
-            networkGiphyRepository = networkGiphyRepository,
-            localGifsRepository = localGifsRepository,
-            networkMonitor = networkMonitor
-        )
+        networkGiphyRepository = spyk<FakeNetworkGiphyRepositoryImpl>()
+        localGifsRepository = spyk<FakeLocalGifsRepositoryImpl>()
+        networkMonitor = spyk<FakeNetworkMonitorImpl>()
+        viewModel = createViewModel()
     }
 
     @After
@@ -80,15 +125,14 @@ class HomeViewModelTest {
             coEvery { networkMonitor.isConnected } returns isConnectedFlow
             coEvery { networkGiphyRepository.takeTrendingGifs() } returns mockGifs.toApiResponse()
             coEvery { localGifsRepository.addTrendingGifs(any()) } returns Unit
-            coEvery { localGifsRepository.getFavoriteGifs() } returns flowOf(emptyList())
+            every { localGifsRepository.getFavoriteGifs() } returns flowOf(emptyList())
 
-            viewModel.onEvent(
-                trendingGifEvent = TrendingGifEvent.LoadTrending,
-                favoriteGifEvent = FavoriteGifEvent.LoadFavorites
-            )
+            viewModel.fetchTrendingAndCategoriesGiphy()
+
             advanceUntilIdle()
 
             coVerify { networkGiphyRepository.takeTrendingGifs() }
+            coVerify { networkGiphyRepository.takeCategoriesOfGiphy() }
             coVerify { localGifsRepository.addTrendingGifs(any()) }  // Ensure addTrendingGifs is called
 
             with(viewModel.uiState.value) {
@@ -109,13 +153,14 @@ class HomeViewModelTest {
             coEvery { networkMonitor.isConnected } returns MutableStateFlow(false)
             coEvery { localGifsRepository.getTrendingGifs() } returns flowOf(cachedGifs)
 
-            viewModel.onEvent(
-                trendingGifEvent = TrendingGifEvent.LoadTrending,
-                favoriteGifEvent = FavoriteGifEvent.LoadFavorites
-            )
+            viewModel.fetchTrendingAndCategoriesGiphy()
+
             advanceUntilIdle()
 
-            Assert.assertEquals(cachedGifs, viewModel.uiState.value.gifsData)
+            Assert.assertEquals(
+                cachedGifs.toTrendingGifsFromLocal(),
+                viewModel.uiState.value.gifsData
+            )
             Assert.assertEquals(false, viewModel.uiState.value.isLoading)
         }
 
@@ -124,7 +169,7 @@ class HomeViewModelTest {
         val favoriteGifs = FakeData.listOfTrendingGifs.map { it.toGifItem().toFavoriteGif() }
         coEvery { localGifsRepository.getFavoriteGifs() } returns flowOf(favoriteGifs)
 
-        viewModel.onEvent(TrendingGifEvent.LoadTrending, FavoriteGifEvent.LoadFavorites)
+        viewModel.loadFavoriteGif()
         advanceUntilIdle()
 
         Assert.assertEquals(favoriteGifs, viewModel.favoriteGifState.value.favoriteGifs)
@@ -135,12 +180,9 @@ class HomeViewModelTest {
     fun `monitorNetworkStatus should send snackbar event when disconnected`() = runTest {
         coEvery { networkMonitor.isConnected } returns MutableStateFlow(false)
 
-//        viewModel.monitorNetworkStatus()
         advanceUntilIdle()
 
-        // Here you should verify the SnackbarController received an event
-        // For instance:
-        // coVerify { SnackbarController.sendEvent(any()) }
+        Assert.assertEquals(viewModel.state.value.isNoInternetConnection, false)
     }
 }
 

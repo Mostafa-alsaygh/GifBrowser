@@ -8,11 +8,16 @@ interface HomeInteractionListener {
     fun onClickGif(trendingGif: TrendingGif)
     fun onClickFavoriteGif(favoriteGif: FavoriteGif)
     fun onClickCategory(categoryName: String)
+    fun fetchTrendingAndCategoriesGiphy()
+    fun loadFavoriteGif()
 
     object Preview : HomeInteractionListener {
         override fun navigateToSearch() {}
         override fun onClickGif(trendingGif: TrendingGif) {}
         override fun onClickFavoriteGif(favoriteGif: FavoriteGif) {}
         override fun onClickCategory(categoryName: String) {}
+        override fun fetchTrendingAndCategoriesGiphy() = Unit
+
+        override fun loadFavoriteGif() = Unit
     }
 }
