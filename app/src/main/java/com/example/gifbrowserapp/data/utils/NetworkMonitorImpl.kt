@@ -10,12 +10,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 import javax.inject.Inject
 
-class NetworkMonitor @Inject constructor(
+
+interface NetworkMonitor {
+    val isConnected: StateFlow<Boolean>
+    fun unregisterNetworkCallback()
+}
+
+class NetworkMonitorImpl @Inject constructor(
     private val connectivityManager: ConnectivityManager
-) {
+) : NetworkMonitor {
 
     private val _networkState = MutableStateFlow(false)
-    val isConnected: StateFlow<Boolean> = _networkState.asStateFlow()
+    override val isConnected: StateFlow<Boolean> = _networkState.asStateFlow()
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -45,7 +51,7 @@ class NetworkMonitor @Inject constructor(
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
     }
 
-    fun unregisterNetworkCallback() {
+    override fun unregisterNetworkCallback() {
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback)
         } catch (e: Exception) {

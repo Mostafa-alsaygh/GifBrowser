@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.example.gifbrowserapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.gifbrowserapp"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -57,7 +57,13 @@ android {
         }
 
     }
-
+    testOptions {
+        unitTests {
+            all { test ->
+                test.systemProperties["robolectric.logging.enabled"] = "true"
+            }
+        }
+    }
 }
 
 dependencies {
