@@ -1,16 +1,11 @@
 package com.example.gifbrowserapp.data.entities.remote.categories
 
-
+import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 import com.google.gson.annotations.SerializedName
 
 data class CategoryData(
 
     @SerializedName("name")
     val name: String?,
-    @SerializedName("name_encoded")
-    val nameEncoded: String?,
-    @SerializedName("gif")
-    val gif: Gif?,
-    @SerializedName("subcategories")
-    val subcategories: List<Subcategory?>?,
+    val gif :GifData
 )

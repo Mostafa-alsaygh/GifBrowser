@@ -1,6 +1,5 @@
 package com.example.gifbrowserapp.present
 
-import com.example.gifbrowserapp.data.FakeData
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
 import com.example.gifbrowserapp.data.entities.remote.ApiResponseRemote
@@ -41,58 +40,14 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class FakeLocalGifsRepositoryImpl : LocalGifsRepository {
-    override fun getFavoriteGifs(): Flow<List<FavoriteGif>> = flow { }
-
-    override suspend fun getFavoriteById(id: String): FavoriteGif = FavoriteGif(
-        id = "saperet",
-        originalGifUrl = "https://duckduckgo.com/?q=purus",
-        webGifUrl = "http://www.bing.com/search?q=maecenas",
-        date = 7945
-    )
-
-    override suspend fun addFavoriteGif(favoriteGif: FavoriteGif) = Unit
-
-    override suspend fun removeFavoriteGif(favoriteGif: FavoriteGif) = Unit
-
-    override suspend fun getTrendingGifs(): Flow<List<LocalTrendingGif>> = flow { }
-
-    override suspend fun addTrendingGifs(trendingGifs: List<LocalTrendingGif>) = Unit
-}
-
-class FakeNetworkGiphyRepositoryImpl : NetworkGiphyRepository {
-    override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> = ApiResponseRemote(
-        data = emptyList(),
-        meta = Meta(status = 200, msg = "")
-    )
-
-    override suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData> =
-        ApiResponseRemote(
-            data = emptyList(),
-            meta = Meta(status = 200, msg = "")
-        )
-
-    override suspend fun takeSearchData(query: String): ApiResponseRemote<GifData> =
-        ApiResponseRemote(
-            data = emptyList(),
-            meta = Meta(status = 200, msg = "")
-        )
-
-}
-
-class FakeNetworkMonitorImpl : NetworkMonitor {
-    override val isConnected: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    override fun unregisterNetworkCallback() = Unit
-}
-
 @ExperimentalCoroutinesApi
 class HomeViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
-    private lateinit var viewModel: HomeViewModel
     private lateinit var networkGiphyRepository: NetworkGiphyRepository
     private lateinit var localGifsRepository: LocalGifsRepository
     private lateinit var networkMonitor: NetworkMonitor
+    private lateinit var viewModel: HomeViewModel
 
     private fun createViewModel() = HomeViewModel(
         context = spyk(),
@@ -133,7 +88,7 @@ class HomeViewModelTest {
 
             coVerify { networkGiphyRepository.takeTrendingGifs() }
             coVerify { networkGiphyRepository.takeCategoriesOfGiphy() }
-            coVerify { localGifsRepository.addTrendingGifs(any()) }  // Ensure addTrendingGifs is called
+            coVerify { localGifsRepository.addTrendingGifs(any()) }
 
             with(viewModel.uiState.value) {
                 assertTrue(
@@ -186,6 +141,50 @@ class HomeViewModelTest {
     }
 }
 
+class FakeLocalGifsRepositoryImpl : LocalGifsRepository {
+    override fun getFavoriteGifs(): Flow<List<FavoriteGif>> = flow { }
+
+    override suspend fun getFavoriteById(id: String): FavoriteGif = FavoriteGif(
+        id = "saperet",
+        originalGifUrl = "https://duckduckgo.com/?q=purus",
+        webGifUrl = "http://www.bing.com/search?q=maecenas",
+        date = 7945
+    )
+
+    override suspend fun addFavoriteGif(favoriteGif: FavoriteGif) = Unit
+
+    override suspend fun removeFavoriteGif(favoriteGif: FavoriteGif) = Unit
+
+    override suspend fun getTrendingGifs(): Flow<List<LocalTrendingGif>> = flow { }
+
+    override suspend fun addTrendingGifs(trendingGifs: List<LocalTrendingGif>) = Unit
+}
+
+class FakeNetworkGiphyRepositoryImpl : NetworkGiphyRepository {
+
+    override suspend fun takeTrendingGifs(): ApiResponseRemote<GifData> = ApiResponseRemote(
+        data = emptyList(),
+        meta = Meta(status = 200, msg = "")
+    )
+
+    override suspend fun takeCategoriesOfGiphy(): ApiResponseRemote<CategoryData> =
+        ApiResponseRemote(
+            data = emptyList(),
+            meta = Meta(status = 200, msg = "")
+        )
+
+    override suspend fun takeSearchData(query: String): ApiResponseRemote<GifData> =
+        ApiResponseRemote(
+            data = emptyList(),
+            meta = Meta(status = 200, msg = "")
+        )
+
+}
+
+class FakeNetworkMonitorImpl : NetworkMonitor {
+    override val isConnected: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    override fun unregisterNetworkCallback() = Unit
+}
 
 fun List<TrendingGif>.toApiResponse(): ApiResponseRemote<GifData> {
     return ApiResponseRemote(

@@ -25,8 +25,12 @@ class NetworkGiphyRepositoryImpl @Inject constructor(
     }
 
 
-
     override suspend fun takeSearchData(query: String): ApiResponseRemote<GifData> {
-        return giphyApi.getSearchData(apiKey = BuildConfig.API_KEY, query = query, limit = 10, offset = 0)
+        return giphyApi.getSearchData(
+            apiKey = BuildConfig.API_KEY,
+            query = query,
+            limit = 10,
+            offset = 0
+        )
     }
 }

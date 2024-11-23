@@ -38,5 +38,4 @@ class LocalGifsRepositoryImpl @Inject constructor(
         return trendingGifDao.addLastTrendingGifs(trendingGifs)
     }
 
-
 }
