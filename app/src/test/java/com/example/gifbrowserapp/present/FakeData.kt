@@ -1,9 +1,6 @@
 package com.example.gifbrowserapp.present
 
 import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
-import com.example.gifbrowserapp.data.entities.remote.FixedWidthDownsampled
-import com.example.gifbrowserapp.data.entities.remote.Original
-import com.example.gifbrowserapp.data.entities.remote.gifData.GifData
 import com.example.gifbrowserapp.presentation.features.home.GifImages
 import com.example.gifbrowserapp.presentation.features.home.TrendingGif
 
@@ -52,38 +49,5 @@ object FakeData {
             sampledGif = "https://sampledomain.com/sample-downsampled3.gif",
             webGifUrl = "https://sampledomain.com/view-original3.gif"
         )
-    )
-
-    val listOfGifData = listOf(
-        GifData(
-            id = "1",
-            title = "Funny GIF",
-            url = "https://example.com/fixed_width_downsampled.gif",
-            images = com.example.gifbrowserapp.data.entities.remote.gifData.GifImages(
-                fixedWidthDownsampled = FixedWidthDownsampled(
-                    size = "15000",
-                    url = "https://example.com/fixed_width_downsampled.gif"
-                ),
-                original = Original(
-                    size = "25000",
-                    url = "https://example.com/original.gif"
-                )
-            )
-        ),
-        GifData(
-            id = "2",
-            title = "Funny GIF",
-            url = "https://example.com/fixed_width_downsampled.gif",
-            images = com.example.gifbrowserapp.data.entities.remote.gifData.GifImages(
-                fixedWidthDownsampled = FixedWidthDownsampled(
-                    size = "15000",
-                    url = "https://example.com/fixed_width_downsampled.gif"
-                ),
-                original = Original(
-                    size = "25000",
-                    url = "https://example.com/original.gif"
-                )
-            )
-        ),
     )
 }
