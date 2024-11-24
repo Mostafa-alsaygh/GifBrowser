@@ -1,5 +1,6 @@
 package com.example.gifbrowserapp.data
 
+import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
 import com.example.gifbrowserapp.data.entities.remote.ApiResponseRemote
 import com.example.gifbrowserapp.data.entities.remote.FixedWidthDownsampled
 import com.example.gifbrowserapp.data.entities.remote.Meta
@@ -96,6 +97,41 @@ object RepositoryFakeData {
         return ApiResponseRemote(
             data = listOfGifData,
             meta = Meta(status = 200, msg = "")
+        )
+    }
+
+    fun getLocalMockTrendingGifs(): List<LocalTrendingGif> {
+        return listOf(
+            LocalTrendingGif(
+                id = "1",
+                originalGifUrl = "https://example.com/original1.gif",
+                sampledGif = "https://example.com/sample1.gif",
+                webGifUrl = "https://example.com/web1"
+            ),
+            LocalTrendingGif(
+                id = "2",
+                originalGifUrl = "https://example.com/original2.gif",
+                sampledGif = "https://example.com/sample2.gif",
+                webGifUrl = "https://example.com/web2"
+            ),
+            LocalTrendingGif(
+                id = "3",
+                originalGifUrl = "https://example.com/original3.gif",
+                sampledGif = "https://example.com/sample3.gif",
+                webGifUrl = "https://example.com/web3"
+            ),
+            LocalTrendingGif(
+                id = "4",
+                originalGifUrl = "https://example.com/original4.gif",
+                sampledGif = "https://example.com/sample4.gif",
+                webGifUrl = "https://example.com/web4"
+            ),
+            LocalTrendingGif(
+                id = "5",
+                originalGifUrl = "https://example.com/original5.gif",
+                sampledGif = "https://example.com/sample5.gif",
+                webGifUrl = "https://example.com/web5"
+            )
         )
     }
 }

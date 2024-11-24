@@ -19,7 +19,6 @@ class LocalGifsRepositoryImpl @Inject constructor(
         return favoriteGifDao.getFavoriteGifOrderedByDate()
     }
 
-
     override suspend fun addFavoriteGif(favoriteGif: FavoriteGif) {
         favoriteGifDao.addFavoriteGif(favoriteGif)
     }
