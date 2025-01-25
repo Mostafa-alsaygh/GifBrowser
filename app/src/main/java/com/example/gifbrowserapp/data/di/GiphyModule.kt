@@ -1,10 +1,14 @@
 package com.example.gifbrowserapp.data.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import androidx.room.Room
 import com.example.gifbrowserapp.BuildConfig
+import com.example.gifbrowserapp.data.entities.local.ResentSearch
 import com.example.gifbrowserapp.data.local.FavoriteGifDao
 import com.example.gifbrowserapp.data.local.LocalGifDatabase
+import com.example.gifbrowserapp.data.local.ResentSearchesSerializer
 import com.example.gifbrowserapp.data.local.TrendingGifDao
 import com.example.gifbrowserapp.data.remote.service.GiphyApiService
 import com.example.gifbrowserapp.data.repository.NetworkGiphyRepository
@@ -18,6 +22,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import javax.inject.Singleton
 
 @Module
@@ -33,6 +38,16 @@ object GiphyModule {
             .create(GiphyApiService::class.java)
 
     }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<List<ResentSearch>> {
+        return DataStoreFactory.create(
+            serializer = ResentSearchesSerializer,
+            produceFile = { File(context.filesDir, "resent_searches.json") }
+        )
+    }
+
 
     @Provides
     @Singleton
@@ -64,8 +79,14 @@ object GiphyModule {
     @Provides
     @Singleton
     fun providesLocalGifsRepository(
-        favoriteGifDao: FavoriteGifDao, trendingGifDao: TrendingGifDao
+        favoriteGifDao: FavoriteGifDao,
+        trendingGifDao: TrendingGifDao,
+        dataStore: DataStore<List<ResentSearch>>
     ): LocalGifsRepository =
-        LocalGifsRepositoryImpl(favoriteGifDao = favoriteGifDao, trendingGifDao = trendingGifDao)
+        LocalGifsRepositoryImpl(
+            favoriteGifDao = favoriteGifDao,
+            trendingGifDao = trendingGifDao,
+            dataStore = dataStore
+        )
 
 }
