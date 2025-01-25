@@ -14,3 +14,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+/buf.yaml
+/gen/kotlin/com/aizen/gifbrowserapp/generated/RecentSearchesKt.kt
+/gen/java/com/aizen/gifbrowserapp/generated/RecentSearchesProto.java
+/gen/kotlin/com/aizen/gifbrowserapp/generated/RecentSearchesProtoKt.proto.kt
+/gen/kotlin/com/aizen/gifbrowserapp/generated/RecentSearchKt.kt
