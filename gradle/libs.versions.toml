@@ -25,6 +25,9 @@ navigationCompose = "2.7.7"
 roomVersion = "2.6.1"
 timber = "5.0.1"
 serialization = "1.9.0"
+protoDataStore = "1.1.1"
+protoBuf="3.21.12"
+immutable = "0.3.8"
 
 
 [libraries]
@@ -34,7 +37,6 @@ androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", vers
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
@@ -54,6 +56,8 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-protodatastore = { module = "androidx.datastore:datastore", version.ref = "protoDataStore" }
+
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -62,9 +66,12 @@ firebase-crashlytics-buildtools = { module = "com.google.firebase:firebase-crash
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+proto-datastore ={module ="com.google.protobuf:protobuf-javalite" ,version.ref ="protoBuf"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+immutable-collections ={module ="org.jetbrains.kotlinx:kotlinx-collections-immutable",version.ref="immutable"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
@@ -87,7 +94,8 @@ implementation-compose = [
     "androidx-ui",
     "androidx-ui-graphics",
     "androidx-ui-tooling-preview",
-    "androidx-material3-compose"
+    "androidx-material3-compose",
+    "androidx-protodatastore"
 ]
 
 implementation-utils = [
@@ -97,6 +105,8 @@ implementation-utils = [
     "hilt",
     "gson",
     "converter-gson",
+    "proto-datastore",
+    "immutable-collections"
 ]
 testImplementation = [
     "mockk",

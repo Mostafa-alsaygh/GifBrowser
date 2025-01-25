@@ -4,8 +4,6 @@ import com.example.gifbrowserapp.data.entities.local.GifItem
 
 data class SearchUiState(
     val gifsData: List<SearchedGif> = emptyList(),
-    val originalGifUrl: String = "",
-    val webGifUrl: String = "",
     val selectedGif: GifItem? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null

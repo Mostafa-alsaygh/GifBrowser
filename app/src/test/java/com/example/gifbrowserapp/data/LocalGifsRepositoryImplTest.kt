@@ -35,7 +35,8 @@ class LocalGifsRepositoryImplTest {
 
         localGifsRepository = LocalGifsRepositoryImpl(
             favoriteGifDao = favoriteGifDao,
-            trendingGifDao = trendingGifDao
+            trendingGifDao = trendingGifDao,
+            dataStore = mockk(relaxed = true)
         )
     }
 

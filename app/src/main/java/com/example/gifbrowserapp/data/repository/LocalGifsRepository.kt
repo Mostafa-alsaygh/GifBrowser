@@ -2,11 +2,10 @@ package com.example.gifbrowserapp.data.repository
 
 import com.example.gifbrowserapp.data.entities.local.FavoriteGif
 import com.example.gifbrowserapp.data.entities.local.LocalTrendingGif
+import com.example.gifbrowserapp.data.entities.local.ResentSearch
 import kotlinx.coroutines.flow.Flow
 
 interface LocalGifsRepository {
-
-    // Favorite Gifs
 
     fun getFavoriteGifs(): Flow<List<FavoriteGif>>
 
@@ -16,12 +15,14 @@ interface LocalGifsRepository {
 
     suspend fun removeFavoriteGif(favoriteGif: FavoriteGif)
 
-    // Trending Gifs
 
     suspend fun getTrendingGifs(): Flow<List<LocalTrendingGif>>
 
     suspend fun addTrendingGifs(trendingGifs: List<LocalTrendingGif>)
 
 
+    suspend fun getRecentSearches(): List<ResentSearch>
+
+    suspend fun saveRecentSearch(search: ResentSearch)
 
 }
